@@ -186,3 +186,6 @@ dkms.conf
 
 # End of https://www.toptal.com/developers/gitignore/api/C
 
+### VARIE ###
+
+.DS_Store
