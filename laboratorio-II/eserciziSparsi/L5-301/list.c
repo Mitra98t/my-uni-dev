@@ -2,6 +2,15 @@
 #include <stdlib.h>
 #include "list.h"
 
+boolean isStrtCresc(List l)
+{
+  if (l == NULL)
+    return false;
+  if (l->next->next == NULL)
+    return (boolean)l->val < l->next->val;
+  return (boolean)((l->val < l->next->val) && isStrtCresc(l->next));
+}
+
 int removeValue(List *l, int v)
 {
   if (*l == NULL)
@@ -142,7 +151,8 @@ void inserOrdDecrescDup(List *l, int v)
 
 void fillOrdDecresc(List l)
 {
-  if(l == NULL) return;
+  if (l == NULL)
+    return;
   while (l->next != NULL)
   {
     if (l->val - 1 != l->next->val && l->val != l->next->val)

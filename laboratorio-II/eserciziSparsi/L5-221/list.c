@@ -72,7 +72,7 @@ int addTail(List *l, int v)
   return newEl->val;
 }
 
-void inserOrdCrescDup(List *l, int v)
+void inserOrd(List *l, int v)
 {
   if (*l == NULL || v <= (*l)->val)
   {
@@ -106,70 +106,25 @@ void inserOrdCrescDup(List *l, int v)
   }
 }
 
-void inserOrdDecrescDup(List *l, int v)
+void fusionOrd(List *l1, List l2, List l3)
 {
-  if (*l == NULL || v >= (*l)->val)
+  while (l2 != NULL)
   {
-    Node *n = (Node *)malloc(sizeof(Node));
-    n->val = v;
-    n->next = *l;
-    *l = n;
+    inserOrd(l1, l2->val);
+    l2 = l2->next;
   }
-
-  Node *curr = *l;
-  while (curr != NULL)
+  while (l3 != NULL)
   {
-    if (v < curr->val)
-    {
-      if (curr->next == NULL)
-      {
-        Node *n = (Node *)malloc(sizeof(Node));
-        n->val = v;
-        n->next = NULL;
-        curr->next = n;
-      }
-      else if (v >= curr->next->val)
-      {
-        Node *n = (Node *)malloc(sizeof(Node));
-        n->val = v;
-        n->next = curr->next;
-        curr->next = n;
-      }
-    }
-    curr = curr->next;
+    inserOrd(l1, l3->val);
+    l3 = l3->next;
   }
 }
 
-void fillOrdDecresc(List l)
-{
-  if(l == NULL) return;
-  while (l->next != NULL)
-  {
-    if (l->val - 1 != l->next->val && l->val != l->next->val)
-    {
-      Node *n = (Node *)malloc(sizeof(Node));
-      n->val = l->val - 1;
-      n->next = l->next;
-      l->next = n;
-    }
-    l = l->next;
-  }
-}
-
-void printBR(List l)
+void print(List l)
 {
   while (l != NULL)
   {
-    printf("%d\n", l->val); //(*l).val
-    l = l->next;
-  }
-}
-
-void printInLine(List l)
-{
-  while (l != NULL)
-  {
-    printf("%d ->", l->val);
+    printf("%d --> ", l->val); //(*l).val
     l = l->next;
   }
   printf("NULL\n");

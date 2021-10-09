@@ -5,7 +5,9 @@ struct N
 };
 typedef struct N Node;
 typedef Node *List;
+typedef enum{false,true} boolean;
 
+boolean isStrtCresc(List);
 int removeValue(List *, int);
 int addHead(List *, int);
 int addTail(List *, int);
