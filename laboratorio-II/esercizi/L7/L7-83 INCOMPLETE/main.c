@@ -15,10 +15,28 @@ typedef struct S String;
 
 int cmpfunc(const void *a, const void *b)
 {
-    String **s1 = (String **)a;
-    String **s2 = (String **)b;
+    const String *s1 = (String *)a;
+    const String *s2 = (String *)b;
 
-    return strcmp((*s1)->txt, (*s2)->txt);
+    printf("Start\nS1: %s Length: %d\nS2: %s Length: %d\n", (s1->txt), s1->length, s2->txt, s2->length);
+    if (s1->length != s2->length)
+    {
+        if (s1->length > s2->length)
+        {
+            printf("End s1 > s2\n");
+            return 1;
+        }
+        else
+        {
+            printf("End s1 < s2\n");
+            return -1;
+        }
+    }
+    else
+    {
+        printf("End lessicografico\n");
+        return strcmp(s1->txt, s2->txt);
+    }
 }
 
 int main(void)
@@ -38,11 +56,11 @@ int main(void)
         strcpy(strs[i]->txt, buff);
     }
 
-    // for (size_t i = 0; i < n; i++)
-    // {
-    //     printf("%d\n", strs[i]->length);
-    //     printf("%s\n", strs[i]->txt);
-    // }
+    for (size_t i = 0; i < n; i++)
+    {
+        printf("%d\n", strs[i]->length);
+        printf("%s\n", strs[i]->txt);
+    }
 
     qsort(strs, n, sizeof(String), cmpfunc);
 
