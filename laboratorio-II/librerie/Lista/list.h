@@ -14,3 +14,4 @@ void inserOrdDecrescDup(List *, int);
 void fillOrdDecresc(List);
 void printBR(List);
 void printInLine(List);
+void freeListR(List *);

@@ -12,4 +12,5 @@ void getInfoDynArr(DynArray *);
 void sortDynArr(DynArray *arrP);
 void printDynArr(DynArray);
 int isCresc(DynArray);
+void fuseDynArraysOrdered(DynArray*, DynArray, DynArray);
 void fuseDynArrays(DynArray*, DynArray, DynArray);

@@ -142,7 +142,8 @@ void inserOrdDecrescDup(List *l, int v)
 
 void fillOrdDecresc(List l)
 {
-  if(l == NULL) return;
+  if (l == NULL)
+    return;
   while (l->next != NULL)
   {
     if (l->val - 1 != l->next->val && l->val != l->next->val)
@@ -173,4 +174,14 @@ void printInLine(List l)
     l = l->next;
   }
   printf("NULL\n");
+}
+
+void freeListR(List *l)
+{
+  if (*l != NULL)
+  {
+    freeListR(&((*l)->next));
+    free(*l);
+    *l = NULL;
+  }
 }

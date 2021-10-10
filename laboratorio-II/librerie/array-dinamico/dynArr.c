@@ -51,7 +51,7 @@ void sortDynArr(DynArray *arrP)
     }
 }
 
-void fuseDynArrays(DynArray *aR, DynArray a1, DynArray a2)
+void fuseDynArraysOrdered(DynArray *aR, DynArray a1, DynArray a2)
 {
     for (int i = 0; i < a1.used; i++)
     {
@@ -63,6 +63,18 @@ void fuseDynArrays(DynArray *aR, DynArray a1, DynArray a2)
     }
 
     sortDynArr(aR);
+}
+
+void fuseDynArrays(DynArray *aR, DynArray a1, DynArray a2)
+{
+    for (int i = 0; i < a1.used; i++)
+    {
+        pushDynArray(aR, a1.array[i]);
+    }
+    for (int i = 0; i < a2.used; i++)
+    {
+        pushDynArray(aR, a2.array[i]);
+    }
 }
 
 int isCresc(DynArray a)
