@@ -2,6 +2,7 @@
 
 int main(int argc, char const *argv[])
 {
+    //test sync
     int *p = NULL;
 
     printf("%d", *p);
