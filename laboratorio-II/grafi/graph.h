@@ -13,10 +13,14 @@ typedef struct
 
 typedef struct
 {
-    int Num;
     Node *nodes;
+    int Num;
+    int EdgesNum;
 } Graph;
 
 Graph loadGraph(char *);
 void addEdge(Edge **, int, float);
-int *dfs(Graph, int);
+int *dfs(Graph, int, int *, int *);
+int hasCycles(Graph);
+int isConnected(Graph);
+int isTree(Graph);

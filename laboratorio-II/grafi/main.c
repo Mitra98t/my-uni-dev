@@ -1,4 +1,7 @@
 #include "graph.h"
+#include "stack.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 int main(void)
 {
@@ -16,5 +19,8 @@ int main(void)
             printf("%d (%f)", g.nodes[e->neigh].lable, e->peso);
         }
     }
+    printf("CONNECTED: %d\n", isConnected(g));
+    printf("HASCYCLES: %d\n", hasCycles(g));
+    printf("ISTREE: %d\n", isTree(g));
     return 0;
 }

@@ -45,6 +45,7 @@ Graph loadGraph(char *file)
                     //Metto arco a 2 direzioni perchè non è orientato
                     addEdge(&g.nodes[n1Idx].edges, n2Idx, peso);
                     addEdge(&g.nodes[n2Idx].edges, n1Idx, peso);
+                    g.EdgesNum++;
                 }
             }
         }
@@ -80,7 +81,7 @@ void addEdge(Edge **adjList, int n, float peso)
     }
 }
 
-int *dfs(Graph g, int start)
+int *dfs(Graph g, int start, int *hasCycles, int *CCCount)
 {
     Stack *s = NULL;
     int finished = 0;
@@ -92,8 +93,12 @@ int *dfs(Graph g, int start)
     {
         visited[i] = 0;
     }
+    if (hasCycles)
+    {
+        hasCycles = 0; //non sono sicuro del valore (0 o 1) -A
+    }
     push(&s, start);
-
+    (*CCCount) = 1;
     while (!finished)
     {
         while (s)
@@ -101,10 +106,19 @@ int *dfs(Graph g, int start)
             int node = pop(&s);
             if (!visited[node])
             {
-                //qui ho un ciclo
+                // Qui NON HO un ciclo
+                // Visito il nodo per la prima volta
                 visited[node] = 1;
                 ris[risCount] = node;
                 risCount++;
+            }
+            else
+            {
+                // Qui HO un ciclo
+                if (hasCycles)
+                {
+                    hasCycles = 1;
+                }
             }
             Edge *edges = g.nodes[node].edges;
             while (edges)
@@ -122,6 +136,31 @@ int *dfs(Graph g, int start)
         if (i == g.Num)
             finished = 1;
         else
+        {
+            if (CCCount)
+                (*CCCount)++;
             push(i, &s);
+        }
     }
+}
+
+int hasCycles(Graph g)
+{
+    int res;
+    dfs(g, 0, &res, NULL);
+    return res;
+}
+
+int isConnected(Graph g)
+{
+    int res;
+    dfs(g, 0, NULL, &res);
+    return res == 1;
+}
+
+int isTree(Graph g)
+{
+    int conn, cycl;
+    dfs(g, 0, &cycl, &conn);
+    return (cycl == 0) && (conn == 1);
 }
