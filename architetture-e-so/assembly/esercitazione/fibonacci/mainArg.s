@@ -1,8 +1,8 @@
-.text
-.global main
-
 .data
 res:    .string "fibo(%d) = %d\n"
+
+.text
+.global main
 
 main:
     push {lr}
