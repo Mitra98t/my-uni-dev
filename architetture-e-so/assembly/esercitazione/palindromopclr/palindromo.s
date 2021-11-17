@@ -17,8 +17,6 @@ getlastpointer:
     cmp r1, r0
     movle r0, #1
     movle pc, lr
-    b confronta
-    mov pc, lr
 
 confronta:
     ldrb r2, [r0]
