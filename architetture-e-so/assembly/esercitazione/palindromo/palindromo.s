@@ -18,9 +18,9 @@ pal:
 getlastpointer:
     ldrb r2, [r0], #1
     cmp r2, #0
-    subeq r0, r0, #2
-    moveq pc, lr
-    b getlastpointer
+    bne getlastpointer
+    sub r0, r0, #2
+    mov pc, lr
 
 confronta:
     ldrb r2, [r0]
