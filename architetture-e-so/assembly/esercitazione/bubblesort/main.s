@@ -16,10 +16,12 @@ main:
     ldr r0, =s
 loop:
     ldr r1, [r2], #4
+    push {r2, r3, r4}
     bl printf
     ldr r0, =s
+    pop {r2, r3, r4}
     add r4, r4, #1
     cmp r4, r3
-    blt loop
+    ble loop
     pop {r4}
     pop {pc}
