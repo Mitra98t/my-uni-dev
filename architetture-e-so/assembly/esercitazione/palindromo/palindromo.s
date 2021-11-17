@@ -35,3 +35,4 @@ confronta:
     movle pc, lr
     add r0, r0, #1
     sub r1, r1, #1
+    b confronta
