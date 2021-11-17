@@ -8,6 +8,7 @@ a2:     .space 16       @ alloco 16 byte
 main:
     ldr r0, =a1
     ldr r1, =a2
+    mov r3, #4
     push {lr}
     bl copyarray
-    pop {pc}    
+    pop {pc}  
