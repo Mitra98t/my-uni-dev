@@ -11,5 +11,6 @@ loop:
     sub r3, r3, #1
     cmp r3, #0
     bne loop
+    mov r0, r4
     pop {r4}
     mov pc, lr

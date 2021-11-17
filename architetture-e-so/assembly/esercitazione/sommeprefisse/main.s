@@ -11,4 +11,4 @@ main:
     mov r3, #4
     push {lr}
     bl sommeprefisse
-    pop{pc}
+    pop {pc}
