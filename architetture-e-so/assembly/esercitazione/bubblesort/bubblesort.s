@@ -19,6 +19,8 @@ for2:
     movgt r6, r4
     movgt r4, r5
     movgt r5, r6
+    strgt r5, [r0]
+    strgt r4, [r0, #-4]
     add r3, r3, #1
     cmp r3, r1
     bne for2
