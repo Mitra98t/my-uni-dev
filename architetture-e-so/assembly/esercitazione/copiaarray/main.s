@@ -6,8 +6,8 @@ a2: .word 0,0,0,0
 .global main
 
 main:
-    ldr r0, [a1]
-    ldr r1, [a2]
+    ldr r0, =a1
+    ldr r1, =a2
     push {lr}
     bl copyarray
     pop {pc}    
