@@ -7,9 +7,10 @@ pal:
     push {lr}
     push {r0}
     b getlastpointer
+pal1:
     mov r1, r0
     pop {r0}
-    cmp r0, r1
+    cmp r1, r0
     movle r0, #1
     movle pc, lr
     b confronta
@@ -20,7 +21,7 @@ getlastpointer:
     cmp r2, #0
     bne getlastpointer
     sub r0, r0, #2
-    mov pc, lr
+    b pal1
 
 confronta:
     ldrb r2, [r0]
@@ -34,7 +35,3 @@ confronta:
     movle pc, lr
     add r0, r0, #1
     sub r1, r1, #1
-    
-
-end:
-    mov pc, lr
