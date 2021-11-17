@@ -5,20 +5,19 @@
 
 pal:
     push {r0}
-    b getlastpointer
-    mov r1, r0
-    pop {r0}
-    cmp r1, r0
-    movle r0, #1
-    movle pc, lr
-    b confronta
-    mov pc, lr
 
 getlastpointer:
     ldrb r2, [r0], #1
     cmp r2, #0
     bne getlastpointer
     sub r0, r0, #2
+
+    mov r1, r0
+    pop {r0}
+    cmp r1, r0
+    movle r0, #1
+    movle pc, lr
+    b confronta
     mov pc, lr
 
 confronta:
