@@ -1,5 +1,5 @@
 .data
-s:      .string "ciao"
+s:      .string "baab"
 res:    .string "palindromo: %d\n"
 
 .text
