@@ -1,6 +1,7 @@
 .data
 s:      .string "ciao"
-res:    .string "caratteri: %d\n"
+res:    .string "palindromo: %d\n"
+
 .text
 .global main
 
