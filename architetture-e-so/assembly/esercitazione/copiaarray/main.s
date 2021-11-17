@@ -1,6 +1,6 @@
 .data
-a1: .word 1,2,3,4
-a2: .word 0,0,0,0
+a1: .word 1,2,3,4   @ dichiaro array statico
+a2: .space 16       @ alloco 16 byte
 
 .text
 .global main
