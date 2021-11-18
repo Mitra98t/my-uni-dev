@@ -10,4 +10,5 @@ main:
     bl revstr
     mov r1, r0
     ldr r0, =res
+    bl printf
     pop {pc}
