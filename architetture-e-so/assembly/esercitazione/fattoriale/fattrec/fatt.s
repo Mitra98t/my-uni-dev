@@ -4,7 +4,8 @@
 fatt:
     cmp r0, #1
     movle pc, lr
-    push {lr, r0}
+    push {lr}
+    push {r0}
     sub r0, r0, #1
     bl fatt
     pop {r1}
