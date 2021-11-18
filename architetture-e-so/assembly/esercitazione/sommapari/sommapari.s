@@ -15,4 +15,4 @@ loop:
     bne loop
     mov r0, r4
     pop {r4}
-    mov pc, lr
+    bx lr
