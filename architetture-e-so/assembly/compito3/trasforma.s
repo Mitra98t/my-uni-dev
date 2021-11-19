@@ -4,9 +4,9 @@
 @ r3 => n
 
 .text
-.global transforma
+.global trasforma
 
-transforma:
+trasforma:
     push {r0, r4, r5}
 fort:
     ldrb r4, [r0]
