@@ -85,11 +85,25 @@ int main(void) {
 }
 */
 
-int main(void)
+int main(int argc, char **argv)
 {
-	FileList *fl = NULL;
+	FileList fl = NULL;
 
-	addFile(fl, "cagasbura");
+	addFile(&fl, "tocco");
+
+	addVersion(&fl, "tocco", 1, 1637507877);
+	addVersion(&fl, "tocco", 2, 1637507877);
+
+	stampaTMP(fl);
+
+	removeVersion(&fl, "tocco", 1);
+
+	addVersion(&fl, "tocco", 3, 1637507877);
+	stampaTMP(fl);
+
+	removeFile(&fl, "tocco");
+	printf("VEDI\n");
+	stampaTMP(fl);
 
 	return 0;
 }

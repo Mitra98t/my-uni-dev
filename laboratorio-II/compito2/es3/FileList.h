@@ -16,8 +16,13 @@ typedef struct FileNode
 typedef FileNode *FileList;
 
 FileNode *searchFile(FileList, const char *);
+VersionList *searchVers(VersionList *, int);
 
 int addFile(FileList *, const char *);
 int addVersion(FileList *, const char *, int, time_t);
+
+int removeFile(FileList *, const char *);
+void removeVersionList(VersionList *);
+int removeVersion(FileList *, const char *, int);
 
 void stampaTMP(FileList);
