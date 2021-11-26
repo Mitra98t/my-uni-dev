@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
 
-
-FileList *searchFile(FileList *fl, const char *filename)
+FileNode *searchFile(FileList fl, const char *filename)
 {
-    FileList *iterator = fl;
+    FileNode *iterator = fl;
 
     while (iterator != NULL)
     {
@@ -21,27 +21,27 @@ FileList *searchFile(FileList *fl, const char *filename)
 
 int addFile(FileList *fl, const char *filename)
 {
-    if (searchFile(fl, filename) != NULL)
-        return 1;
+    // if (searchFile(*fl, filename) != NULL)
+    //     return 1;
 
-    FileList *tmp = (FileList *)malloc(sizeof(FileList));
+    FileNode *tmp = (FileNode *)malloc(sizeof(FileNode));
     if (!tmp)
         return 1;
-    tmp->name = (char*)filename;
+    tmp->name = strdup((char *)filename);
     tmp->versions = NULL;
-    tmp->next = fl;
+    tmp->next = *fl;
     *fl = tmp;
     return 0;
 }
 
 int addVersion(FileList *fl, const char *filename, int versionID, time_t timestamp)
 {
-    FileList *foundF = searchFile(fl, filename);
+    FileNode *foundF = searchFile(*fl, filename);
     if (!foundF)
     {
         if (!addFile(fl, filename))
         {
-            foundF = fl;
+            foundF = *fl;
         }
         else
         {
@@ -59,9 +59,9 @@ int addVersion(FileList *fl, const char *filename, int versionID, time_t timesta
     return 0;
 }
 
-void stampaTMP(FileList *fl)
+void stampaTMP(FileList fl)
 {
-    FileList *iter = fl;
+    FileNode *iter = fl;
     while (iter != NULL)
     {
         printf("FILE: %s\n", iter->name);

@@ -89,10 +89,7 @@ int main(void)
 {
 	FileList *fl = NULL;
 
-	printf("%d",addFile(fl, "cagasbura"));
-	stampaTMP(fl);
-
-	printf("\nCIAO\n");
+	addFile(fl, "cagasbura");
 
 	return 0;
 }

@@ -7,16 +7,17 @@ typedef struct VersionList
     struct VersionList *next;
 } VersionList;
 
-typedef struct FileList
+typedef struct FileNode
 {
     char *name;
     VersionList *versions;
-    struct FileList *next;
-} FileList;
+    struct FileNode *next;
+} FileNode;
+typedef FileNode *FileList;
 
-FileList *searchFile(FileList *, const char *);
+FileNode *searchFile(FileList, const char *);
 
 int addFile(FileList *, const char *);
 int addVersion(FileList *, const char *, int, time_t);
 
-void stampaTMP(FileList *);
+void stampaTMP(FileList);
