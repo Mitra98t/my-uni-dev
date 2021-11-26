@@ -96,7 +96,7 @@ int main(int argc, char **argv)
 
 	stampaTMP(fl);
 
-	removeVersion(&fl, "tocco", 1);
+	removeVersion(&fl, "tocco", 2);
 
 	addVersion(&fl, "tocco", 3, 1637507877);
 	stampaTMP(fl);

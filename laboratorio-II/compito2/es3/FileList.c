@@ -148,6 +148,7 @@ int removeVersion(FileList *fl, const char *filename, int versionID)
     if (vIter == NULL)
         return 2;
 
+
     while (vIter->next != NULL)
     {
         if (vIter->next->version == versionID)
