@@ -84,7 +84,7 @@ void stampaTMP(FileList fl)
         VersionNode *vIter = iter->versions;
         while (vIter != NULL)
         {
-            printf("Vers: %d | ", vIter->version);
+            printf("| Vers: %d - Time: %s |", vIter->version, vIter->timestamp);
             vIter = vIter->next;
         }
         printf("\n");
@@ -187,20 +187,128 @@ void removeFileList(FileNode *fn)
 VersionList getHist(FileList fl, const char *filename)
 {
     FileNode *found = searchFile(fl, filename);
-    VersionList v = *(found->versions);
+    if (!found)
+        return NULL;
+    VersionList v = (found->versions);
     return v;
 }
 
-// FileList loadFileList(const char *file)
-// {
-//     FILE *in = fopen((char *)file, "r");
-//     if(!in) return NULL;
+FileList loadFileList(const char *file)
+{
+    FileList fl = NULL;
+    FILE *in = fopen((char *)file, "r");
+    if (!in)
+        return NULL;
 
-//     char line[1000];
+    char line[1000];
 
-//     while (fgets(line, 1000, in) && !feof(in))
-//     {
+    while (!feof(in))
+    {
+        fgets(line, 1000, in);
+        char *name = strtok(line, ":");
+        if (addFile(&fl, name))
+            return NULL;
+        char *token = NULL;
 
-//     }
-    
-// }
+        while ((token = strtok(NULL, ";")))
+        {
+            char numC[2] = {token[0], '\0'};
+            int num = atoi(numC);
+            if (!num)
+                return NULL;
+            char *time = cleanstr(strdup(&token[2]));
+            addVersion(&fl, name, num, (time_t)time);
+            // if (addVersion(&fl, name, num, time))
+            //     return NULL;
+        }
+    }
+
+    return fl;
+}
+
+int saveFileList(FileList f, const char *file)
+{
+    FileNode *tmp = NULL;
+    while (f != NULL)
+    {
+        FileNode *fn = (FileNode *)malloc(sizeof(FileNode));
+        fn->name = f->name;
+        fn->versions = f->versions;
+        fn->next = tmp;
+        tmp = fn;
+        f = f->next;
+    }
+
+    FileNode *iter = tmp;
+    char buff[1000];
+    char *str = (char *)malloc(1000);
+    strcat(str, "_");
+    while (iter != NULL)
+    {
+        sprintf(buff, "%s:%s", iter->name, getVersString(iter->versions));
+        strcat(str, buff);
+        iter = iter->next;
+    }
+
+    strtok(str, "_");
+
+    // printf("%s", strtok(NULL, "\0"));
+
+    FILE *out = fopen(file, "w");
+    if (!out)
+        return 1;
+
+    fprintf(out, "%s", strtok(NULL, "\0"));
+
+    if (ferror(out))
+        return 1;
+
+    fclose(out);
+    return 0;
+}
+
+char *getVersString(VersionList v)
+{
+    VersionNode *tmp = NULL;
+    while (v != NULL)
+    {
+        VersionNode *vn = (VersionNode *)malloc(sizeof(VersionNode));
+        vn->version = v->version;
+        vn->timestamp = v->timestamp;
+        vn->next = tmp;
+        tmp = vn;
+        v = v->next;
+    }
+
+    VersionNode *iter = tmp;
+    char buff[1000];
+    char *str = (char *)malloc(1000);
+
+    strcat(str, "/");
+
+    while (iter != NULL)
+    {
+        sprintf(buff, "%d,%s", iter->version, (char *)iter->timestamp);
+        strcat(str, buff);
+        if (iter->next != NULL)
+            strcat(str, ";");
+        iter = iter->next;
+    }
+    strcat(str, "\n\0");
+    strtok(str, "/");
+    return strtok(NULL, "\0");
+}
+
+char *cleanstr(char *s)
+{
+    if (s[strlen(s) - 1] == '\n')
+        s[strlen(s) - 1] = '\0';
+
+    // for (int i = 0; i < strlen(s); i++)
+    // {
+    //     if (s[i] == '\n')
+    //         s[i] = '\0';
+    // }
+
+    return s;
+}

@@ -19,92 +19,75 @@ Non editare la funzione main e i file di input e output che trovate su REPL.
 #include <assert.h>
 #include "FileList.h"
 
+// int main(void) {
+// 	char fname[100],command[200];
+// 	scanf("%s",fname);
 
-int main(void) {
-	char fname[100],command[200];
-	scanf("%s",fname);
+//   	FileList f= loadFileList(fname);
+// 	VersionList h=NULL;
+// 	if(f){
+// 		int option;
+// 		scanf("%d",&option);
+// 		switch(option){
+// 			case 1:
+// 				saveFileList(f,"realout1.txt");
+// 				sprintf(command,"diff %s %s","out1.txt","realout1.txt");
+//   			system(command);
+// 				break;
 
-  	FileList f= loadFileList(fname);
-	VersionList h=NULL;
-	if(f){
-		int option;
-		scanf("%d",&option);
-		switch(option){
-			case 1: 
-				saveFileList(f,"realout1.txt");
-				sprintf(command,"diff %s %s","out1.txt","realout1.txt");
-  			system(command);
-				break;
-		
-			case 2:
-				addFile(&f,"/home/user/f9.txt");
-				saveFileList(f,"realout2.txt");
-				sprintf(command,"diff %s %s","out2.txt","realout2.txt");
-  			system(command);
-				break;
+// 			case 2:
+// 				addFile(&f,"/home/user/f9.txt");
+// 				saveFileList(f,"realout2.txt");
+// 				sprintf(command,"diff %s %s","out2.txt","realout2.txt");
+//   			system(command);
+// 				break;
 
-			case 3:
-				addVersion(&f,"/home/user/f9.txt",1,1637507877);
-				saveFileList(f,"realout3.txt");
-				sprintf(command,"diff %s %s","out3.txt","realout3.txt");
-  			system(command);
-				break;
+// 			case 3:
+// 				addVersion(&f,"/home/user/f9.txt",1,1637507877);
+// 				saveFileList(f,"realout3.txt");
+// 				sprintf(command,"diff %s %s","out3.txt","realout3.txt");
+//   			system(command);
+// 				break;
 
-			case 4:
-				addVersion(&f,"/home/user/f2.txt",2,1637507890);
-				saveFileList(f,"realout4.txt");
-				sprintf(command,"diff %s %s","out4.txt","realout4.txt");
-  			system(command);
-				break;
+// 			case 4:
+// 				addVersion(&f,"/home/user/f2.txt",2,1637507890);
+// 				saveFileList(f,"realout4.txt");
+// 				sprintf(command,"diff %s %s","out4.txt","realout4.txt");
+//   			system(command);
+// 				break;
 
-			case 5:
-				removeFile(&f,"/home/user/f2.txt");
-				saveFileList(f,"realout5.txt");
-				sprintf(command,"diff %s %s","out5.txt","realout5.txt");
-  			system(command);
-				break;
+// 			case 5:
+// 				removeFile(&f,"/home/user/f2.txt");
+// 				saveFileList(f,"realout5.txt");
+// 				sprintf(command,"diff %s %s","out5.txt","realout5.txt");
+//   			system(command);
+// 				break;
 
-			case 6:
-				removeVersion(&f,"/home/user/t3.txt",2);
-				saveFileList(f,"realout6.txt");
-				sprintf(command,"diff %s %s","out6.txt","realout6.txt");
-  			system(command);
-				break;
+// 			case 6:
+// 				removeVersion(&f,"/home/user/t3.txt",2);
+// 				saveFileList(f,"realout6.txt");
+// 				sprintf(command,"diff %s %s","out6.txt","realout6.txt");
+//   			system(command);
+// 				break;
 
-			case 7:
-				h=getHist(f,"/home/user/t3.txt");
-				assert(h!=NULL);
-				freeFileList(&f);
-				assert(f==NULL);
-		}
-		printf("Done.\n");
-	}
-	else{
-		printf("Errore.\n");
-	}
-}
-
-
-// int main(int argc, char **argv)
-// {
-// 	FileList fl = NULL;
-
-// 	addFile(&fl, "tocco");
-
-// 	addVersion(&fl, "tocco", 1, 1637507877);
-// 	addVersion(&fl, "tocco", 2, 1637507877);
-// 	removeVersion(&fl, "tocco", 2);
-// 	addVersion(&fl, "tocco", 3, 1637507877);
-// 	addFile(&fl, "cacchina");
-// 	addFile(&fl, "pipo");
-// 	removeFile(&fl, "tocco");
-
-// 	stampaTMP(fl);
-	
-// 	printf("REMOVED_____________________________________\n\n");
-
-// 	freeFileList(&fl);
-// 	stampaTMP(fl);
-
-// 	return 0;
+// 			case 7:
+// 				h=getHist(f,"/home/user/t3.txt");
+// 				assert(h!=NULL);
+// 				freeFileList(&f);
+// 				assert(f==NULL);
+// 		}
+// 		printf("Done.\n");
+// 	}
+// 	else{
+// 		printf("Errore.\n");
+// 	}
 // }
+
+int main(int argc, char **argv)
+{
+	FileList fl = loadFileList("./test.txt");
+
+	saveFileList(fl, "./testOut.txt");
+
+	return 0;
+}

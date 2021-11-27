@@ -31,5 +31,8 @@ void removeFileList(FileNode *fn);
 VersionList getHist(FileList, const char *);
 
 FileList loadFileList(const char *);
+int saveFileList(FileList, const char *);
+char *getVersString(VersionList);
 
 void stampaTMP(FileList);
+char *cleanstr(char *);
