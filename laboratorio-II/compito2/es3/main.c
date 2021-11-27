@@ -19,7 +19,7 @@ Non editare la funzione main e i file di input e output che trovate su REPL.
 #include <assert.h>
 #include "FileList.h"
 
-/*
+
 int main(void) {
 	char fname[100],command[200];
 	scanf("%s",fname);
@@ -83,28 +83,28 @@ int main(void) {
 		printf("Errore.\n");
 	}
 }
-*/
 
-int main(int argc, char **argv)
-{
-	FileList fl = NULL;
 
-	addFile(&fl, "tocco");
+// int main(int argc, char **argv)
+// {
+// 	FileList fl = NULL;
 
-	addVersion(&fl, "tocco", 1, 1637507877);
-	addVersion(&fl, "tocco", 2, 1637507877);
-	removeVersion(&fl, "tocco", 2);
-	addVersion(&fl, "tocco", 3, 1637507877);
-	addFile(&fl, "cacchina");
-	addFile(&fl, "pipo");
-	removeFile(&fl, "tocco");
+// 	addFile(&fl, "tocco");
 
-	stampaTMP(fl);
+// 	addVersion(&fl, "tocco", 1, 1637507877);
+// 	addVersion(&fl, "tocco", 2, 1637507877);
+// 	removeVersion(&fl, "tocco", 2);
+// 	addVersion(&fl, "tocco", 3, 1637507877);
+// 	addFile(&fl, "cacchina");
+// 	addFile(&fl, "pipo");
+// 	removeFile(&fl, "tocco");
+
+// 	stampaTMP(fl);
 	
-	printf("REMOVED_____________________________________\n\n");
+// 	printf("REMOVED_____________________________________\n\n");
 
-	freeFileList(&fl);
-	stampaTMP(fl);
+// 	freeFileList(&fl);
+// 	stampaTMP(fl);
 
-	return 0;
-}
+// 	return 0;
+// }

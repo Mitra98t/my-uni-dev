@@ -19,9 +19,9 @@ FileNode *searchFile(FileList fl, const char *filename)
     return NULL;
 }
 
-VersionList *searchVers(VersionList *vl, int v)
+VersionList searchVers(VersionList vl, int v)
 {
-    VersionList *iterator = vl;
+    VersionNode *iterator = vl;
 
     while (iterator != NULL)
     {
@@ -64,7 +64,7 @@ int addVersion(FileList *fl, const char *filename, int versionID, time_t timesta
         }
     }
 
-    VersionList *tmp = (VersionList *)malloc(sizeof(VersionList));
+    VersionNode *tmp = (VersionNode *)malloc(sizeof(VersionNode));
     if (!tmp)
         return 1;
     tmp->version = versionID;
@@ -81,7 +81,7 @@ void stampaTMP(FileList fl)
     while (iter != NULL)
     {
         printf("FILE: %s\n", iter->name);
-        VersionList *vIter = iter->versions;
+        VersionNode *vIter = iter->versions;
         while (vIter != NULL)
         {
             printf("Vers: %d | ", vIter->version);
@@ -125,7 +125,7 @@ int removeFile(FileList *fl, const char *filename)
     return 1;
 }
 
-void removeVersionList(VersionList *vl)
+void removeVersionList(VersionNode *vl)
 {
     if (vl != NULL)
     {
@@ -144,7 +144,7 @@ int removeVersion(FileList *fl, const char *filename, int versionID)
     // if (foundV == NULL)
     //     return 2;
 
-    VersionList *vIter = foundF->versions;
+    VersionNode *vIter = foundF->versions;
     if (vIter == NULL)
         return 2;
 
@@ -159,7 +159,7 @@ int removeVersion(FileList *fl, const char *filename, int versionID)
     {
         if (vIter->next->version == versionID)
         {
-            VersionList *old = vIter->next;
+            VersionNode *old = vIter->next;
             vIter->next = old->next;
             free(old);
             return 0;
@@ -190,3 +190,17 @@ VersionList getHist(FileList fl, const char *filename)
     VersionList v = *(found->versions);
     return v;
 }
+
+// FileList loadFileList(const char *file)
+// {
+//     FILE *in = fopen((char *)file, "r");
+//     if(!in) return NULL;
+
+//     char line[1000];
+
+//     while (fgets(line, 1000, in) && !feof(in))
+//     {
+
+//     }
+    
+// }
