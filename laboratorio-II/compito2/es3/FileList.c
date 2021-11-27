@@ -168,3 +168,25 @@ int removeVersion(FileList *fl, const char *filename, int versionID)
 
     return 2;
 }
+
+void freeFileList(FileList *fl)
+{
+    removeFileList(*fl);
+    *fl = NULL;
+}
+
+void removeFileList(FileNode *fn)
+{
+    if (fn != NULL)
+    {
+        removeFileList(fn->next);
+        removeFile(&fn, fn->name);
+    }
+}
+
+VersionList getHist(FileList fl, const char *filename)
+{
+    FileNode *found = searchFile(fl, filename);
+    VersionList v = *(found->versions);
+    return v;
+}

@@ -24,5 +24,9 @@ int addVersion(FileList *, const char *, int, time_t);
 int removeFile(FileList *, const char *);
 void removeVersionList(VersionList *);
 int removeVersion(FileList *, const char *, int);
+void freeFileList(FileList *);
+void removeFileList(FileNode *fn);
+
+VersionList getHist(FileList, const char *);
 
 void stampaTMP(FileList);

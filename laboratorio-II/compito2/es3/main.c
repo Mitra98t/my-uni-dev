@@ -93,16 +93,17 @@ int main(int argc, char **argv)
 
 	addVersion(&fl, "tocco", 1, 1637507877);
 	addVersion(&fl, "tocco", 2, 1637507877);
-
-	stampaTMP(fl);
-
 	removeVersion(&fl, "tocco", 2);
-
 	addVersion(&fl, "tocco", 3, 1637507877);
-	stampaTMP(fl);
-
+	addFile(&fl, "cacchina");
+	addFile(&fl, "pipo");
 	removeFile(&fl, "tocco");
-	printf("VEDI\n");
+
+	stampaTMP(fl);
+	
+	printf("REMOVED_____________________________________\n\n");
+
+	freeFileList(&fl);
 	stampaTMP(fl);
 
 	return 0;
