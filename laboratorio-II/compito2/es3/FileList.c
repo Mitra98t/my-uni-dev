@@ -51,6 +51,7 @@ int addFile(FileList *fl, const char *filename)
 
 int addVersion(FileList *fl, const char *filename, int versionID, time_t timestamp)
 {
+  
     FileNode *foundF = searchFile(*fl, filename);
     if (foundF == NULL)
     {
@@ -74,23 +75,7 @@ int addVersion(FileList *fl, const char *filename, int versionID, time_t timesta
     return 0;
 }
 
-void stampaTMP(FileList fl)
-{
-    FileNode *iter = fl;
 
-    while (iter != NULL)
-    {
-        printf("FILE: %s\n", iter->name);
-        VersionNode *vIter = iter->versions;
-        while (vIter != NULL)
-        {
-            printf("| Vers: %d - Time: %s |", vIter->version, vIter->timestamp);
-            vIter = vIter->next;
-        }
-        printf("\n");
-        iter = iter->next;
-    }
-}
 
 int removeFile(FileList *fl, const char *filename)
 {
@@ -164,6 +149,7 @@ int removeVersion(FileList *fl, const char *filename, int versionID)
             free(old);
             return 0;
         }
+        vIter = vIter->next;
     }
 
     return 2;
@@ -196,6 +182,7 @@ VersionList getHist(FileList fl, const char *filename)
 FileList loadFileList(const char *file)
 {
     FileList fl = NULL;
+    FileList head = NULL;
     FILE *in = fopen((char *)file, "r");
     if (!in)
         return NULL;
@@ -206,8 +193,17 @@ FileList loadFileList(const char *file)
     {
         fgets(line, 1000, in);
         char *name = strtok(line, ":");
-        if (addFile(&fl, name))
-            return NULL;
+        
+        if(!head){
+          addFile(&head, name);
+          fl = head;
+        }
+        else{
+          FileList fn = NULL;
+          addFile(&fn, name);
+          fl->next = fn;
+          fl = fn;
+        }
         char *token = NULL;
 
         while ((token = strtok(NULL, ";")))
@@ -217,48 +213,33 @@ FileList loadFileList(const char *file)
             if (!num)
                 return NULL;
             char *time = cleanstr(strdup(&token[2]));
-            addVersion(&fl, name, num, (time_t)time);
-            // if (addVersion(&fl, name, num, time))
-            //     return NULL;
+            addVersion(&head, name, num, atoi(time));
         }
     }
 
-    return fl;
+    return head;
 }
 
 int saveFileList(FileList f, const char *file)
 {
-    FileNode *tmp = NULL;
-    while (f != NULL)
-    {
-        FileNode *fn = (FileNode *)malloc(sizeof(FileNode));
-        fn->name = f->name;
-        fn->versions = f->versions;
-        fn->next = tmp;
-        tmp = fn;
-        f = f->next;
-    }
-
-    FileNode *iter = tmp;
+    FileNode *iter = f;
     char buff[1000];
     char *str = (char *)malloc(1000);
-    strcat(str, "_");
     while (iter != NULL)
     {
-        sprintf(buff, "%s:%s", iter->name, getVersString(iter->versions));
+        sprintf(buff, "%s:%s", iter->name, getVersString(iter->versions, (iter->next != NULL)));
         strcat(str, buff);
         iter = iter->next;
     }
 
-    strtok(str, "_");
 
-    // printf("%s", strtok(NULL, "\0"));
+    str = cleanstr(str);
 
     FILE *out = fopen(file, "w");
     if (!out)
         return 1;
 
-    fprintf(out, "%s", strtok(NULL, "\0"));
+    fprintf(out, "%s", str);
 
     if (ferror(out))
         return 1;
@@ -267,7 +248,7 @@ int saveFileList(FileList f, const char *file)
     return 0;
 }
 
-char *getVersString(VersionList v)
+char *getVersString(VersionList v, int newLine)
 {
     VersionNode *tmp = NULL;
     while (v != NULL)
@@ -284,31 +265,44 @@ char *getVersString(VersionList v)
     char buff[1000];
     char *str = (char *)malloc(1000);
 
-    strcat(str, "/");
-
     while (iter != NULL)
     {
-        sprintf(buff, "%d,%s", iter->version, (char *)iter->timestamp);
+        sprintf(buff, "%d,%d", iter->version, (int)iter->timestamp);
         strcat(str, buff);
         if (iter->next != NULL)
             strcat(str, ";");
         iter = iter->next;
     }
-    strcat(str, "\n\0");
-    strtok(str, "/");
-    return strtok(NULL, "\0");
+    if (newLine)
+        strcat(str, "\n\0");
+    else
+        strcat(str, "\0");
+
+    return str;
+}
+
+void stampaTMP(FileList fl)
+{
+    FileNode *iter = fl;
+
+    while (iter != NULL)
+    {
+        printf("FILE: %s\n", iter->name);
+        VersionNode *vIter = iter->versions;
+        while (vIter != NULL)
+        {
+            printf("| Vers: %d - Time: %s |", vIter->version,( char *)vIter->timestamp);
+            vIter = vIter->next;
+        }
+        printf("\n");
+        iter = iter->next;
+    }
 }
 
 char *cleanstr(char *s)
 {
     if (s[strlen(s) - 1] == '\n')
         s[strlen(s) - 1] = '\0';
-
-    // for (int i = 0; i < strlen(s); i++)
-    // {
-    //     if (s[i] == '\n')
-    //         s[i] = '\0';
-    // }
 
     return s;
 }

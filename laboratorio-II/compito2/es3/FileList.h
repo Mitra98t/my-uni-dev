@@ -32,7 +32,7 @@ VersionList getHist(FileList, const char *);
 
 FileList loadFileList(const char *);
 int saveFileList(FileList, const char *);
-char *getVersString(VersionList);
+char *getVersString(VersionList, int);
 
 void stampaTMP(FileList);
 char *cleanstr(char *);
