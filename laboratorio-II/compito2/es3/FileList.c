@@ -51,7 +51,7 @@ int addFile(FileList *fl, const char *filename)
 
 int addVersion(FileList *fl, const char *filename, int versionID, time_t timestamp)
 {
-  
+
     FileNode *foundF = searchFile(*fl, filename);
     if (foundF == NULL)
     {
@@ -74,8 +74,6 @@ int addVersion(FileList *fl, const char *filename, int versionID, time_t timesta
     foundF->versions = tmp;
     return 0;
 }
-
-
 
 int removeFile(FileList *fl, const char *filename)
 {
@@ -193,16 +191,18 @@ FileList loadFileList(const char *file)
     {
         fgets(line, 1000, in);
         char *name = strtok(line, ":");
-        
-        if(!head){
-          addFile(&head, name);
-          fl = head;
+
+        if (!head)
+        {
+            addFile(&head, name);
+            fl = head;
         }
-        else{
-          FileList fn = NULL;
-          addFile(&fn, name);
-          fl->next = fn;
-          fl = fn;
+        else
+        {
+            FileList fn = NULL;
+            addFile(&fn, name);
+            fl->next = fn;
+            fl = fn;
         }
         char *token = NULL;
 
@@ -214,9 +214,12 @@ FileList loadFileList(const char *file)
                 return NULL;
             char *time = cleanstr(strdup(&token[2]));
             addVersion(&head, name, num, atoi(time));
+            free(time);
         }
+        free(name);
     }
-
+    if (!fclose(in))
+        return NULL;
     return head;
 }
 
@@ -232,7 +235,6 @@ int saveFileList(FileList f, const char *file)
         iter = iter->next;
     }
 
-
     str = cleanstr(str);
 
     FILE *out = fopen(file, "w");
@@ -244,7 +246,9 @@ int saveFileList(FileList f, const char *file)
     if (ferror(out))
         return 1;
 
-    fclose(out);
+    if (!fclose(out))
+        return 1;
+    free(str);
     return 0;
 }
 
@@ -277,7 +281,9 @@ char *getVersString(VersionList v, int newLine)
         strcat(str, "\n\0");
     else
         strcat(str, "\0");
-
+    
+    free(tmp);
+    free(str);
     return str;
 }
 
@@ -291,7 +297,7 @@ void stampaTMP(FileList fl)
         VersionNode *vIter = iter->versions;
         while (vIter != NULL)
         {
-            printf("| Vers: %d - Time: %s |", vIter->version,( char *)vIter->timestamp);
+            printf("| Vers: %d - Time: %s |", vIter->version, (char *)vIter->timestamp);
             vIter = vIter->next;
         }
         printf("\n");
