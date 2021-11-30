@@ -1,17 +1,28 @@
 /*
 Implementare una libreria per lavorare con liste bidimensionali utilizzate per tenere traccia di versioni di file. Ogni file è definito dal suo path assoluto, più una lista di versioni. Per ogni versione abbiamo un ID numerico e una timestamp con la data della versione. 
-Scrivere una struttura di dati FileList che utilizza liste concatenate per mantenere le versioni, e per mantenere la lista stessa di file. 
-Implementare le seguenti funzioni:
-int addFile(FileList* fl ,const char* filename) - aggiunge un file nuovo alla lista (in testa) e restituisce 0 in caso di successo, 1 in caso di errore. La lista di versioni del nuovo file è vuota. Se il file esiste già non aggiunge niente e restituisce 1. 
-int addVersion(FileList* fl, const char* filename, int versionID, time_t timestamp) - aggiunge una nuova versione alla lista di versione del file con il nome filename. Se il file non esiste nella lista, lo aggiunge. La funzione restituisce 0 in caso di successo, 1 in caso di errore.
-int removeFile(FileList* fl ,const char* filename) - rimuove un file con tutte le sue versioni dalla lista. Se il file non esiste restituisce 1, altrimenti 0.
-int removeVersion (FileList* fl, const char* filename, int versionID)  - rimuove una versione da un file nella lista. Se il file non esiste, restituisce 1, se la versione non esiste, restituisce 2, altrimenti 0.
-VersionList getHist(FileList fl, const char* filename) - restituisce la lista di versioni del file passato come parametro. Il tipo di return VersionList è lo stesso della struttura di dati utilizzata per mantenere la lista di versioni.
-void freeFileList(FileList* fl) - libera la memoria per la lista FileList. Dopo la chiamata il puntatore fl deve essere NULL.
-FileList loadFileList(const char* file) - legge una lista da un file testuale. Ogni file e le sue versioni sono rappresentate su una riga nel formato “nome file: versione, timestamp; versione, timestamp; … versione, timestamp” Restituisce  la lista di file, NULL in caso di errore.
-int saveFileList(FileList f, const char* file) - salva una lista di file in un file testuale, nel formatto descritto sopra. La funzione restituisce 0 in caso di successo, 1 in caso di errore.
 
+Scrivere una struttura di dati FileList che utilizza liste concatenate per mantenere le versioni, e per mantenere la lista stessa di file. 
+
+Implementare le seguenti funzioni:
+
+int addFile(FileList* fl ,const char* filename) - aggiunge un file nuovo alla lista (in testa) e restituisce 0 in caso di successo, 1 in caso di errore. La lista di versioni del nuovo file è vuota. Se il file esiste già non aggiunge niente e restituisce 1. 
+
+int addVersion(FileList* fl, const char* filename, int versionID, time_t timestamp) - aggiunge una nuova versione alla lista di versione del file con il nome filename. Se il file non esiste nella lista, lo aggiunge. La funzione restituisce 0 in caso di successo, 1 in caso di errore.
+
+int removeFile(FileList* fl ,const char* filename) - rimuove un file con tutte le sue versioni dalla lista. Se il file non esiste restituisce 1, altrimenti 0.
+
+int removeVersion (FileList* fl, const char* filename, int versionID)  - rimuove una versione da un file nella lista. Se il file non esiste, restituisce 1, se la versione non esiste, restituisce 2, altrimenti 0.
+
+VersionList getHist(FileList fl, const char* filename) - restituisce la lista di versioni del file passato come parametro. Il tipo di return VersionList è lo stesso della struttura di dati utilizzata per mantenere la lista di versioni.
+
+void freeFileList(FileList* fl) - libera la memoria per la lista FileList. Dopo la chiamata il puntatore fl deve essere NULL.
+
+FileList loadFileList(const char* file) - legge una lista da un file testuale. Ogni file e le sue versioni sono rappresentate su una riga nel formato “nome file: versione, timestamp; versione, timestamp; … versione, timestamp” Restituisce  la lista di file, NULL in caso di errore.
+
+int saveFileList(FileList f, const char* file) - salva una lista di file in un file testuale, nel formatto descritto sopra. La funzione restituisce 0 in caso di successo, 1 in caso di errore.
+ 
 Non editare la funzione main e i file di input e output che trovate su REPL.
+
 */
 
 #include <stdio.h>
@@ -19,23 +30,22 @@ Non editare la funzione main e i file di input e output che trovate su REPL.
 #include <assert.h>
 #include "FileList.h"
 
-/*
 int main(void) {
 	char fname[100],command[200];
 	scanf("%s",fname);
 
-  	FileList f= loadFileList(fname);
+  FileList f= loadFileList(fname);
 	VersionList h=NULL;
 	if(f){
 		int option;
 		scanf("%d",&option);
 		switch(option){
-			case 1: 
+			case 1:
 				saveFileList(f,"realout1.txt");
 				sprintf(command,"diff %s %s","out1.txt","realout1.txt");
   			system(command);
 				break;
-		
+
 			case 2:
 				addFile(&f,"/home/user/f9.txt");
 				saveFileList(f,"realout2.txt");
@@ -83,16 +93,4 @@ int main(void) {
 		printf("Errore.\n");
 	}
 }
-*/
 
-int main(void)
-{
-	FileList *fl = NULL;
-
-	printf("%d",addFile(fl, "cagasbura"));
-	stampaTMP(fl);
-
-	printf("\nCIAO\n");
-
-	return 0;
-}
