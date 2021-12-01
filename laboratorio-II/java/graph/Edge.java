@@ -16,4 +16,8 @@ public class Edge {
         return n2;
     }
 
+    public double getWeight() {
+        return weight;
+    }
+
 }

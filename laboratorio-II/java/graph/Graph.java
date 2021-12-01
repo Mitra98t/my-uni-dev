@@ -1,6 +1,7 @@
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Queue;
 
 public class Graph implements Iterable<Integer> {
@@ -58,13 +59,19 @@ public class Graph implements Iterable<Integer> {
         n2.addEdge(newEdge);
     }
 
+    public void reset() {
+        for (Node node : nodes) {
+            node.unvisit();
+        }
+    }
+
     @Override
     public Iterator<Integer> iterator() {
         return new BFSIterator();
     }
 
     private class BFSIterator implements Iterator<Integer> {
-        Queue nodeq;
+        Queue<Node> nodeq;
         int visitedCount;
 
         public BFSIterator() {
@@ -75,14 +82,41 @@ public class Graph implements Iterable<Integer> {
 
         @Override
         public boolean hasNext() {
-            // TODO Auto-generated method stub
-            return false;
+            return visitedCount < nodes.size();
         }
 
         @Override
         public Integer next() {
-            // TODO Auto-generated method stub
-            return null;
+            boolean ok = false;
+
+            // true se finisco la componente connessa o la coda è vuota
+            if (nodeq.isEmpty()) {
+                for (Node node : nodes) {
+                    if (!node.isVisited()) {
+                        // ci sono altre componenti connesse
+                        ok = true;
+                        nodeq.offer(node);
+                        break;
+                    }
+                }
+                if (!ok) // qui ho finito tutte le componenti connesse
+                    throw new NoSuchElementException();
+            }
+
+            while (nodeq.peek().isVisited())
+                nodeq.poll(); // rimuovo gli elementi in cima già visitati
+
+            Node n = nodeq.poll(); // sicuramente non è visitato
+            n.visit(); // visito elemento n
+            // aggiungo vicini nella coda
+            for (Node m : n.getNeigh()) {
+                if (!m.isVisited())
+                    nodeq.offer(m);
+
+            }
+            visitedCount++;
+
+            return n.getLabel();
         }
 
     }

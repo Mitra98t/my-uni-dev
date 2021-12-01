@@ -25,7 +25,7 @@ public class Node {
         return edges;
     }
 
-    public boolean getVisited(){
+    public boolean isVisited() {
         return visited;
     }
 
