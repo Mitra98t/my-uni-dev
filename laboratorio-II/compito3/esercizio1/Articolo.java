@@ -1,3 +1,4 @@
+import java.util.Comparator;
 import java.util.HashMap;
 
 public class Articolo {
@@ -19,6 +20,8 @@ public class Articolo {
     }
 
     static void assegna_valore(String tipo, int nuovo_valore) {
+        if (articoliValues == null)
+            articoliValues = new HashMap<String, Integer>();
         articoliValues.put(tipo, nuovo_valore);
     }
 
@@ -34,4 +37,11 @@ public class Articolo {
         return volume;
     }
 
+    public static int getValore(Articolo a) {
+        return articoliValues.get(a.getTipo());
+    }
+
+    public String toString() {
+        return tipo + ", " + peso + ", " + volume + ", (" + articoliValues.get(tipo) + ")";
+    }
 }

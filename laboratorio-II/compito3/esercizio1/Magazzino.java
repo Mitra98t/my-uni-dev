@@ -1,5 +1,10 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Comparator;
 
 public class Magazzino {
     private HashMap<String, Integer> quantita;
@@ -20,6 +25,17 @@ public class Magazzino {
     }
 
     void rifornisci(String filename) {
+        try (BufferedReader bf = new BufferedReader(new FileReader(filename))) {
+            String riga = bf.readLine();
+            while (riga != null) {
+                String[] values = riga.split(",");
+                Articolo toAdd = new Articolo(values[0], Integer.parseInt(values[1]), Integer.parseInt(values[2]));
+                aggiungi(toAdd, Integer.parseInt(values[3]));
+                riga = bf.readLine();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     boolean disponibile(Articolo a) {
@@ -50,7 +66,27 @@ public class Magazzino {
         return totalVolume;
     }
 
-    private String getArticleName(Articolo a) {
+    List<Articolo> disponibili() {
+        List<Articolo> res = new ArrayList<>();
+        for (Map.Entry<String, Integer> set : quantita.entrySet()) {
+            if (set.getValue() > 0) {
+                String[] values = set.getKey().split(",");
+                Articolo toAdd = new Articolo(values[0], Integer.parseInt(values[1]), Integer.parseInt(values[2]));
+                res.add(toAdd);
+            }
+        }
+        res.sort(artComparator);
+        return res;
+    }
+
+    public static Comparator<Articolo> artComparator = new Comparator<Articolo>() {
+
+        public int compare(Articolo s1, Articolo s2) {
+            return getArticleName(s1).compareTo(getArticleName(s2));
+        }
+    };
+
+    static String getArticleName(Articolo a) {
         return a.getTipo() + "," + a.getPeso() + "," + a.getVolume();
     }
 }

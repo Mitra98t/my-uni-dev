@@ -1,19 +1,20 @@
 class Main {
 	public static void main(String[] args) {
+
+		Articolo.assegna_valore("tenda", 10);
+		Articolo.assegna_valore("torcia", 4);
+		Articolo.assegna_valore("set pentole", 3);
+		Articolo.assegna_valore("notebook", 2);
+		Magazzino m = new Magazzino();
+		m.rifornisci("elenco.csv");
+		for (Articolo a : m.disponibili())
+			System.out.println(a);
+
 		/*
-		 * 
-		 * Articolo.assegna_valore("tenda", 10);
-		 * Articolo.assegna_valore("torcia", 4);
-		 * Articolo.assegna_valore("set pentole", 3);
-		 * Articolo.assegna_valore("notebook", 2);
-		 * Magazzino m = new Magazzino();
-		 * m.rifornisci("elenco.csv");
-		 * for(Articolo a: m.disponibili())
-		 * System.out.println(a);
-		 * 
 		 * Il codice qui sopra dovrebbe generare un
 		 * output simile al seguente (dipende da come avete
 		 * definito il metodo toString in Articolo)
+		 * 
 		 * 
 		 * borraccia, 2, 1, (1)
 		 * borraccia, 10, 5, (1)
@@ -38,3 +39,5 @@ class Main {
 		System.out.println("--- bye -----");
 	}
 }
+
+
