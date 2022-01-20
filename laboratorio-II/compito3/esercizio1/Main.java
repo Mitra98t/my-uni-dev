@@ -7,8 +7,7 @@ class Main {
 		Articolo.assegna_valore("notebook", 2);
 		Magazzino m = new Magazzino();
 		m.rifornisci("elenco.csv");
-		for (Articolo a : m.disponibili())
-			System.out.println(a);
+		System.out.println(m);
 
 		/*
 		 * Il codice qui sopra dovrebbe generare un
@@ -36,8 +35,11 @@ class Main {
 		 * torcia, 5, 3, (4)
 		 * 
 		 */
+		System.out.println("\n\n");
+		Zaino z = new Zaino(30, 30);
+		z.riempi(m);
+		System.out.println(z);
 		System.out.println("--- bye -----");
 	}
 }
-
 

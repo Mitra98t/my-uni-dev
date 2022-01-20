@@ -111,6 +111,15 @@ public class Magazzino {
         }
     };
 
+    public String toString() {
+        String res = "";
+        for (List<Articolo> list : quantita) {
+            if (!list.isEmpty())
+                res += list.get(0) + "\n";
+        }
+        return res;
+    }
+
     static String getArticleName(Articolo a) {
         return a.getTipo() + "," + a.getPeso() + "," + a.getVolume();
     }

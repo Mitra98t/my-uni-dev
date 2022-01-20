@@ -24,8 +24,8 @@ public class Zaino {
     void aggiungi(Articolo a) throws NoWay {
         if (puo_contenere(a)) {
             contains.add(a);
-            maxV += a.getVolume();
-            maxP += a.getPeso();
+            curV += a.getVolume();
+            curP += a.getPeso();
         } else
             throw new NoWay();
     }
@@ -60,18 +60,30 @@ public class Zaino {
 
     boolean contiene_tipo(String t) {
         for (Articolo articolo : contains) {
-            if (articolo.getTipo() == t)
+            if (articolo.getTipo().compareTo(t) == 0)
                 return true;
         }
         return false;
     }
 
     void riempi(Magazzino m) {
+        boolean alreadyThere = false;
         List<Articolo> items = m.disponibili();
         items.sort(artComparator);
 
+        System.out.println("\nLISTA ORDINATA PER ZAINO\n");
         for (Articolo articolo : items) {
-            if (puo_contenere(articolo)) {
+            System.out.println(articolo);
+        }
+        System.out.println("\nLISTA ORDINATA PER ZAINO\n");
+
+        for (Articolo articolo : items) {
+            for (Articolo articolo2 : contains) {
+                if (articolo2.getTipo().compareTo(articolo.getTipo()) == 0) {
+                    alreadyThere = true;
+                }
+            }
+            if (puo_contenere(articolo) && !alreadyThere) {
                 try {
                     aggiungi(articolo);
                     m.prendi1(articolo);
@@ -79,6 +91,7 @@ public class Zaino {
                     continue;
                 }
             }
+            alreadyThere = false;
         }
     }
 
@@ -86,19 +99,19 @@ public class Zaino {
 
         public int compare(Articolo s1, Articolo s2) {
             if (Articolo.getValore(s1) > Articolo.getValore(s2))
-                return 1;
-            else if (Articolo.getValore(s1) < Articolo.getValore(s2))
                 return -1;
+            else if (Articolo.getValore(s1) < Articolo.getValore(s2))
+                return 1;
             else {
                 if (s1.getPeso() > s2.getPeso())
-                    return -1;
-                else if (s1.getPeso() > s2.getPeso())
                     return 1;
+                else if (s1.getPeso() < s2.getPeso())
+                    return -1;
                 else {
                     if (s1.getVolume() > s2.getVolume())
-                        return -1;
-                    else if (s1.getVolume() < s2.getVolume())
                         return 1;
+                    else if (s1.getVolume() < s2.getVolume())
+                        return -1;
                     else
                         return 0;
                 }
@@ -106,4 +119,16 @@ public class Zaino {
         }
     };
 
+    public String toString() {
+        String res = "";
+        res += "Peso Max: " + maxP + "\n";
+        res += "Volume Max: " + maxV + "\n";
+        res += "Peso corrente: " + curP + "\n";
+        res += "Volume corrente: " + curV + "\n";
+        res += "Lista articoli: \n";
+        for (Articolo articolo : contains) {
+            res += articolo.toString() + "\n";
+        }
+        return res;
+    }
 }
