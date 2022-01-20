@@ -78,8 +78,8 @@ public class Magazzino {
     List<Articolo> disponibili() {
         List<Articolo> res = new ArrayList<>();
         for (List<Articolo> list : quantita) {
-            if(!list.isEmpty())
-                res.add(list.get(0));
+            if (!list.isEmpty())
+                res.add(new Articolo(list.get(0).getTipo(), list.get(0).getPeso(), list.get(0).getVolume()));
         }
         res.sort(artComparator);
         return res;
