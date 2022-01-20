@@ -1,27 +1,31 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Comparator;
 
 public class Magazzino {
-    private HashMap<String, Integer> quantita;
+    private List<List<Articolo>> quantita;
 
     Magazzino() {
-        quantita = new HashMap<String, Integer>();
+        quantita = new ArrayList<>();
     }
 
     int aggiungi(Articolo a, int q) {
-        String key = getArticleName(a);
-        int oldQ = 0;
+        for (int i = 0; i < quantita.size(); i++) {
+            if (!quantita.get(i).isEmpty() && quantita.get(i).get(0).compareArt(a)) {
+                for (int j = 0; j < q; j++)
+                    quantita.get(i).add(a);
+                return quantita.get(i).size();
+            }
 
-        if (quantita.containsKey(key))
-            oldQ = quantita.get(key);
+        }
 
-        quantita.put(key, oldQ + q);
-        return oldQ + q;
+        List<Articolo> temp = new ArrayList<>();
+        for (int i = 0; i < q; i++)
+            temp.add(a);
+        quantita.add(temp);
+        return temp.size();
     }
 
     void rifornisci(String filename) {
@@ -39,50 +43,71 @@ public class Magazzino {
     }
 
     boolean disponibile(Articolo a) {
-        return quantita.containsKey(getArticleName(a))
-                && quantita.get(getArticleName(a)) > 1;
+        for (List<Articolo> list : quantita) {
+            if (!list.isEmpty() && list.get(0).compareArt(a))
+                return true;
+
+        }
+        return false;
     }
 
     int prendi1(Articolo a) throws OutOfStock {
-        String key = getArticleName(a);
-        if (quantita.containsKey(key)) {
-            int oldQ = 0;
-            oldQ = quantita.get(key);
-            if (oldQ == 0)
-                throw new OutOfStock();
-
-            quantita.put(key, oldQ - 1);
-            return oldQ - 1;
+        for (int i = 0; i < quantita.size(); i++) {
+            if (!quantita.get(i).isEmpty() && quantita.get(i).get(0).compareArt(a)) {
+                if (quantita.get(i).size() == 1) {
+                    quantita.remove(i);
+                    return 0;
+                } else {
+                    quantita.get(i).remove(quantita.size() - 1);
+                    return quantita.get(i).size();
+                }
+            }
         }
         throw new OutOfStock();
     }
 
     int volume_tot() {
         int totalVolume = 0;
-        for (Map.Entry<String, Integer> set : quantita.entrySet()) {
-            totalVolume += set.getValue() * Integer.parseInt(
-                    set.getKey().subSequence(set.getKey().lastIndexOf(','), set.getKey().length()).toString());
-        }
+        for (int i = 0; i < quantita.size(); i++)
+            if (!quantita.get(i).isEmpty())
+                totalVolume += quantita.get(i).get(0).getVolume() * quantita.get(i).size();
+
         return totalVolume;
     }
 
     List<Articolo> disponibili() {
         List<Articolo> res = new ArrayList<>();
-        for (Map.Entry<String, Integer> set : quantita.entrySet()) {
-            if (set.getValue() > 0) {
-                String[] values = set.getKey().split(",");
-                Articolo toAdd = new Articolo(values[0], Integer.parseInt(values[1]), Integer.parseInt(values[2]));
-                res.add(toAdd);
-            }
+        for (List<Articolo> list : quantita) {
+            if(!list.isEmpty())
+                res.add(list.get(0));
         }
         res.sort(artComparator);
         return res;
     }
 
     public static Comparator<Articolo> artComparator = new Comparator<Articolo>() {
+        public int compare(Articolo a1, Articolo a2) {
+            int res = a1.getTipo().compareTo(a2.getTipo());
+            if (res > 0) {
+                return 1;
+            } else if (res < 0) {
+                return -1;
+            } else {
+                if (a1.getPeso() > a2.getPeso()) {
+                    return 1;
+                } else if (a1.getPeso() < a2.getPeso()) {
+                    return -1;
+                } else {
+                    if (a1.getVolume() > a2.getVolume()) {
+                        return 1;
+                    } else if (a1.getVolume() < a2.getVolume()) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
 
-        public int compare(Articolo s1, Articolo s2) {
-            return getArticleName(s1).compareTo(getArticleName(s2));
+            }
         }
     };
 

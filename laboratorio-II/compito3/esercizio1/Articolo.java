@@ -36,6 +36,10 @@ public class Articolo {
         return volume;
     }
 
+    public boolean compareArt(Articolo a) {
+        return a.getTipo() == tipo && a.getPeso() == peso && a.getVolume() == volume;
+    }
+
     public static int getValore(Articolo a) {
         return articoliValues.get(a.getTipo());
     }

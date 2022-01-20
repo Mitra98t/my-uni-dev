@@ -66,14 +66,18 @@ public class Zaino {
         return false;
     }
 
-    void riempi(Magazzino m) throws NoWay, OutOfStock {
+    void riempi(Magazzino m) {
         List<Articolo> items = m.disponibili();
         items.sort(artComparator);
 
         for (Articolo articolo : items) {
             if (puo_contenere(articolo)) {
-                aggiungi(articolo);
-                m.prendi1(articolo);
+                try {
+                    aggiungi(articolo);
+                    m.prendi1(articolo);
+                } catch (Exception e) {
+                    continue;
+                }
             }
         }
     }
