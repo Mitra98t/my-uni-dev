@@ -5,18 +5,9 @@ class Main {
 		Articolo.assegna_valore("torcia", 4);
 		Articolo.assegna_valore("set pentole", 3);
 		Articolo.assegna_valore("notebook", 2);
-		MagazzinoHash m = new MagazzinoHash();
+		Magazzino m = new Magazzino();
 		m.rifornisci("elenco.csv");
 		System.out.println(m);
-		System.out.println(m.disponibili());
-
-		try {
-			m.prendi1(new Articolo("motosega", 50, 10));
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		System.out.println(m.disponibile(new Articolo("motosega", 50, 10)));
-		System.out.println(m.disponibili());
 
 		/*
 		 * Il codice qui sopra dovrebbe generare un

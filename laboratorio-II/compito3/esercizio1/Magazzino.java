@@ -1,30 +1,25 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Magazzino {
-    private List<List<Articolo>> quantita;
+    private HashMap<Articolo, Integer> quantita;
 
     Magazzino() {
-        quantita = new ArrayList<>();
+        quantita = new HashMap<Articolo, Integer>();
     }
 
     int aggiungi(Articolo a, int q) {
-        for (int i = 0; i < quantita.size(); i++) {
-            if (!quantita.get(i).isEmpty() && quantita.get(i).get(0).equals(a)) {
-                for (int j = 0; j < q; j++)
-                    quantita.get(i).add(a);
-                return quantita.get(i).size();
-            }
+        int oldQ = 0;
 
-        }
+        if (quantita.containsKey(a))
+            oldQ = quantita.get(a);
 
-        List<Articolo> temp = new ArrayList<>();
-        for (int i = 0; i < q; i++)
-            temp.add(a);
-        quantita.add(temp);
-        return temp.size();
+        quantita.put(a, oldQ + q);
+        return oldQ + q;
     }
 
     void rifornisci(String filename) {
@@ -33,7 +28,8 @@ public class Magazzino {
             while (riga != null) {
                 String[] values = riga.split(",");
                 Articolo toAdd = new Articolo(values[0], Integer.parseInt(values[1]), Integer.parseInt(values[2]));
-                aggiungi(toAdd, Integer.parseInt(values[3]));
+                if (Integer.parseInt(values[3]) > 0)
+                    aggiungi(toAdd, Integer.parseInt(values[3]));
                 riga = bf.readLine();
             }
         } catch (Exception e) {
@@ -42,43 +38,36 @@ public class Magazzino {
     }
 
     boolean disponibile(Articolo a) {
-        for (List<Articolo> list : quantita) {
-            if (!list.isEmpty() && list.get(0).equals(a))
-                return true;
-
-        }
-        return false;
+        return quantita.containsKey(a);
     }
 
     int prendi1(Articolo a) throws OutOfStock {
-        for (int i = 0; i < quantita.size(); i++) {
-            if (!quantita.get(i).isEmpty() && quantita.get(i).get(0).equals(a)) {
-                if (quantita.get(i).size() == 1) {
-                    quantita.remove(i);
-                    return 0;
-                } else {
-                    quantita.get(i).remove(quantita.size() - 1);
-                    return quantita.get(i).size();
-                }
-            }
+        if (quantita.containsKey(a)) {
+            int oldQ = 0;
+            oldQ = quantita.get(a);
+            if (oldQ - 1 == 0)
+                quantita.remove(a);
+            else
+                quantita.put(a, oldQ - 1);
+            return oldQ - 1;
         }
         throw new OutOfStock();
     }
 
     int volume_tot() {
         int totalVolume = 0;
-        for (int i = 0; i < quantita.size(); i++)
-            if (!quantita.get(i).isEmpty())
-                totalVolume += quantita.get(i).get(0).getVolume() * quantita.get(i).size();
-
+        for (Map.Entry<Articolo, Integer> set : quantita.entrySet()) {
+            totalVolume += set.getValue() * set.getKey().getVolume();
+        }
         return totalVolume;
     }
 
     List<Articolo> disponibili() {
         List<Articolo> res = new ArrayList<>();
-        for (List<Articolo> list : quantita) {
-            if (!list.isEmpty())
-                res.add(new Articolo(list.get(0).getTipo(), list.get(0).getPeso(), list.get(0).getVolume()));
+        for (Map.Entry<Articolo, Integer> set : quantita.entrySet()) {
+            if (set.getValue() > 0) {
+                res.add(new Articolo(set.getKey().getTipo(), set.getKey().getPeso(), set.getKey().getVolume()));
+            }
         }
         res.sort((Articolo a1, Articolo a2) -> {
             if (a1.getTipo().compareTo(a2.getTipo()) != 0)
@@ -91,48 +80,13 @@ public class Magazzino {
         return res;
     }
 
-    // Message: Errore nel metodo disponibili(). Controlla ordinamento articoli nel
-    // risultato
-
-    // Message: Errore metodo disponpibili(). Controlla ordinamento risultato
-
-    // public static Comparator<Articolo> artComparator = new Comparator<Articolo>()
-    // {
-    // public int compare(Articolo a1, Articolo a2) {
-    // int res = a1.getTipo().compareTo(a2.getTipo());
-    // if (res > 0) {
-    // return 1;
-    // } else if (res < 0) {
-    // return -1;
-    // } else {
-    // if (a1.getPeso() > a2.getPeso()) {
-    // return 1;
-    // } else if (a1.getPeso() < a2.getPeso()) {
-    // return -1;
-    // } else {
-    // if (a1.getVolume() > a2.getVolume()) {
-    // return 1;
-    // } else if (a1.getVolume() < a2.getVolume()) {
-    // return -1;
-    // } else {
-    // return 0;
-    // }
-    // }
-
-    // }
-    // }
-    // };
-
     public String toString() {
         String res = "";
-        for (List<Articolo> list : quantita) {
-            if (!list.isEmpty())
-                res += list.get(0) + "\n";
+        for (Map.Entry<Articolo, Integer> set : quantita.entrySet()) {
+            res += set.getKey() + " quantità: ";
+            res += set.getValue() + "\n";
         }
         return res;
     }
 
-    static String getArticleName(Articolo a) {
-        return a.getTipo() + "," + a.getPeso() + "," + a.getVolume();
-    }
 }
