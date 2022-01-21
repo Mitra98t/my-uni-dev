@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Articolo {
     private String tipo;
@@ -36,10 +37,6 @@ public class Articolo {
         return volume;
     }
 
-    public boolean compareArt(Articolo a) {
-        return a.getTipo().compareTo(tipo) == 0 && a.getPeso() == peso && a.getVolume() == volume;
-    }
-
     public static int getValore(Articolo a) {
         return articoliValues.get(a.getTipo());
     }
@@ -47,4 +44,22 @@ public class Articolo {
     public String toString() {
         return tipo + ", " + peso + ", " + volume + ", (" + articoliValues.get(tipo) + ")";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Articolo)
+            return equals((Articolo) o);
+
+        return false;
+    }
+
+    public boolean equals(Articolo a) {
+        return a.getTipo().compareTo(tipo) == 0 && a.getPeso() == peso && a.getVolume() == volume;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tipo, peso, volume);
+    }
+
 }

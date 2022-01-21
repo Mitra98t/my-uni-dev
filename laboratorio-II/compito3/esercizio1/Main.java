@@ -5,9 +5,18 @@ class Main {
 		Articolo.assegna_valore("torcia", 4);
 		Articolo.assegna_valore("set pentole", 3);
 		Articolo.assegna_valore("notebook", 2);
-		Magazzino m = new Magazzino();
+		MagazzinoHash m = new MagazzinoHash();
 		m.rifornisci("elenco.csv");
 		System.out.println(m);
+		System.out.println(m.disponibili());
+
+		try {
+			m.prendi1(new Articolo("motosega", 50, 10));
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		System.out.println(m.disponibile(new Articolo("motosega", 50, 10)));
+		System.out.println(m.disponibili());
 
 		/*
 		 * Il codice qui sopra dovrebbe generare un
@@ -35,11 +44,7 @@ class Main {
 		 * torcia, 5, 3, (4)
 		 * 
 		 */
-		System.out.println("\n\n");
-		Zaino z = new Zaino(30, 30);
-		z.riempi(m);
-		System.out.println(z);
+
 		System.out.println("--- bye -----");
 	}
 }
-

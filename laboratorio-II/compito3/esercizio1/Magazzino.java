@@ -13,7 +13,7 @@ public class Magazzino {
 
     int aggiungi(Articolo a, int q) {
         for (int i = 0; i < quantita.size(); i++) {
-            if (!quantita.get(i).isEmpty() && quantita.get(i).get(0).compareArt(a)) {
+            if (!quantita.get(i).isEmpty() && quantita.get(i).get(0).equals(a)) {
                 for (int j = 0; j < q; j++)
                     quantita.get(i).add(a);
                 return quantita.get(i).size();
@@ -44,7 +44,7 @@ public class Magazzino {
 
     boolean disponibile(Articolo a) {
         for (List<Articolo> list : quantita) {
-            if (!list.isEmpty() && list.get(0).compareArt(a))
+            if (!list.isEmpty() && list.get(0).equals(a))
                 return true;
 
         }
@@ -53,7 +53,7 @@ public class Magazzino {
 
     int prendi1(Articolo a) throws OutOfStock {
         for (int i = 0; i < quantita.size(); i++) {
-            if (!quantita.get(i).isEmpty() && quantita.get(i).get(0).compareArt(a)) {
+            if (!quantita.get(i).isEmpty() && quantita.get(i).get(0).equals(a)) {
                 if (quantita.get(i).size() == 1) {
                     quantita.remove(i);
                     return 0;
@@ -81,35 +81,48 @@ public class Magazzino {
             if (!list.isEmpty())
                 res.add(new Articolo(list.get(0).getTipo(), list.get(0).getPeso(), list.get(0).getVolume()));
         }
-        res.sort(artComparator);
+        res.sort((Articolo a1, Articolo a2) -> {
+            if (a1.getTipo().compareTo(a2.getTipo()) != 0)
+                return a1.getTipo().compareTo(a2.getTipo());
+            else if (a1.getPeso() - a2.getPeso() != 0)
+                return a1.getPeso() - a2.getPeso();
+            else
+                return a1.getVolume() - a2.getVolume();
+        });
         return res;
     }
 
-    public static Comparator<Articolo> artComparator = new Comparator<Articolo>() {
-        public int compare(Articolo a1, Articolo a2) {
-            int res = a1.getTipo().compareTo(a2.getTipo());
-            if (res > 0) {
-                return 1;
-            } else if (res < 0) {
-                return -1;
-            } else {
-                if (a1.getPeso() > a2.getPeso()) {
-                    return 1;
-                } else if (a1.getPeso() < a2.getPeso()) {
-                    return -1;
-                } else {
-                    if (a1.getVolume() > a2.getVolume()) {
-                        return 1;
-                    } else if (a1.getVolume() < a2.getVolume()) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                }
+    // Message: Errore nel metodo disponibili(). Controlla ordinamento articoli nel
+    // risultato
 
-            }
-        }
-    };
+    // Message: Errore metodo disponpibili(). Controlla ordinamento risultato
+
+    // public static Comparator<Articolo> artComparator = new Comparator<Articolo>()
+    // {
+    // public int compare(Articolo a1, Articolo a2) {
+    // int res = a1.getTipo().compareTo(a2.getTipo());
+    // if (res > 0) {
+    // return 1;
+    // } else if (res < 0) {
+    // return -1;
+    // } else {
+    // if (a1.getPeso() > a2.getPeso()) {
+    // return 1;
+    // } else if (a1.getPeso() < a2.getPeso()) {
+    // return -1;
+    // } else {
+    // if (a1.getVolume() > a2.getVolume()) {
+    // return 1;
+    // } else if (a1.getVolume() < a2.getVolume()) {
+    // return -1;
+    // } else {
+    // return 0;
+    // }
+    // }
+
+    // }
+    // }
+    // };
 
     public String toString() {
         String res = "";
