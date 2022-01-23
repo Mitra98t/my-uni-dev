@@ -2,7 +2,5 @@
  * IExam
  */
 public interface IExam {
-    int getGrade(){
-        
-    }
+    int getGrade();
 }

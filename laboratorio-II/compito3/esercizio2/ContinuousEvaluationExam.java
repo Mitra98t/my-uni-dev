@@ -9,6 +9,11 @@ public class ContinuousEvaluationExam extends AbstractExam {
         continuousEvaluationGrades = new ArrayList<>();
     }
 
+    // TODO: rimuovere questo metodo
+    public List<Integer> getContinuousEvaluationGrades() {
+        return continuousEvaluationGrades;
+    }
+
     void addContinuousEvaluationGrade(int g) throws IllegalArgumentException {
         if (g >= 0 && g <= 30)
             continuousEvaluationGrades.add(g);
@@ -24,6 +29,6 @@ public class ContinuousEvaluationExam extends AbstractExam {
         }
 
         sum += super.getOralGrade();
-        return sum / (continuousEvaluationGrades.size() + 1);
+        return (int) Math.round((double) sum / (double) (continuousEvaluationGrades.size() + 1));
     }
 }

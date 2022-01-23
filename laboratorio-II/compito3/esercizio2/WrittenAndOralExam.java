@@ -10,7 +10,7 @@ public class WrittenAndOralExam extends AbstractExam {
         return writtenGrade;
     }
 
-    public void setWrittenGrade(int oralGrade) throws IllegalArgumentException {
+    public void setWrittenGrade(int writtenGrade) throws IllegalArgumentException {
         if (writtenGrade >= 0 && writtenGrade <= 30)
             this.writtenGrade = writtenGrade;
         else
@@ -19,9 +19,7 @@ public class WrittenAndOralExam extends AbstractExam {
 
     @Override
     public int getGrade() {
-        return Math.round((writtenGrade+super.getOralGrade())/2);
+        double exp = (double) (writtenGrade + super.getOralGrade()) / 2;
+        return (int) Math.round(exp);
     }
 }
-
-// getter e setter per writtenGrade. Il setter controlla che il voto sia tra 0 e
-// 30 e lancia IllegalArgumentException se non è nell’intervallo giusto.

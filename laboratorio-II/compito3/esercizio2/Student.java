@@ -20,7 +20,11 @@ public class Student {
         return name;
     }
 
-    void addExam(AbstractExam examA) {
+    public int getStudentNumber() {
+        return studentNumber;
+    }
+
+    public void addExam(AbstractExam examA) {
         for (AbstractExam abstractExam : exams) {
             if (abstractExam.getExamName().equals(examA.getExamName())) {
                 exams.remove(abstractExam);
@@ -29,10 +33,10 @@ public class Student {
         exams.add(examA);
     }
 
-    int getYear() {
+    public int getYear() {
         int sum = 0;
         for (AbstractExam abstractExam : exams) {
-            if (abstractExam.getGrade() > 17) {
+            if (abstractExam.getGrade() >= 18) {
                 sum += abstractExam.getCredits();
             }
         }
@@ -45,7 +49,7 @@ public class Student {
             return 3;
     }
 
-    double getECTSAverage() {
+    public double getECTSAverage() {
 
         int cfuSum = 0;
         int votSum = 0;
@@ -58,6 +62,10 @@ public class Student {
 
         if (cfuSum == 0)
             return 0;
-        return Math.round(votSum / cfuSum);
+        return (int) Math.round((double) votSum / (double) cfuSum);
+    }
+
+    public int compareTo(Student s) {
+        return getECTSAverage() - s.getECTSAverage() < 0 ? -1 : getECTSAverage() - s.getECTSAverage() > 0 ? 1 : 0;
     }
 }

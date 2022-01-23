@@ -1,4 +1,4 @@
-public class AbstractExam implements IExam {
+public abstract class AbstractExam implements IExam {
     private int credits;
     private String examName;
     private int oralGrade;
