@@ -50,7 +50,6 @@ public class Student {
     }
 
     public double getECTSAverage() {
-
         int cfuSum = 0;
         int votSum = 0;
         for (AbstractExam abstractExam : exams) {
