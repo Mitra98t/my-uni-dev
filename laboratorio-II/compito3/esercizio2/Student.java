@@ -68,4 +68,9 @@ public class Student {
     public int compareTo(Student s) {
         return getECTSAverage() - s.getECTSAverage() < 0 ? -1 : getECTSAverage() - s.getECTSAverage() > 0 ? 1 : 0;
     }
+
+    @Override
+    public String toString() {
+        return name + " " + studentNumber;
+    }
 }

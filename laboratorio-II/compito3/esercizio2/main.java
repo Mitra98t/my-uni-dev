@@ -10,7 +10,11 @@ public class main {
         } catch (Exception e) {
             // TODO: handle exception
         }
+
+        System.out.println(cs.getTopStudentPerYear(1));
+        System.out.println(cs.getTopStudentPerYear(2));
+        System.out.println(cs.getTopStudentPerYear(3));
         
-        System.out.println(cs.toString());
+        // System.out.println(cs.toString());
     }
 }
