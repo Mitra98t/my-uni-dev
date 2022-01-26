@@ -27,8 +27,7 @@ public class ContinuousEvaluationExam extends AbstractExam {
         for (Integer integer : continuousEvaluationGrades) {
             sum += integer;
         }
-
-        sum += super.getOralGrade();
-        return (int) Math.round((double) sum / (double) (continuousEvaluationGrades.size() + 1));
+        int mediaItinere = (int) Math.round((double) sum / continuousEvaluationGrades.size());
+        return (int) Math.round(((double) (mediaItinere + super.getOralGrade())) / 2);
     }
 }

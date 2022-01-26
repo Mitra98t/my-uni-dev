@@ -30,6 +30,7 @@ public class main {
 
         s.addExam(esame);
         s.addExam(esame2);
+        s.addExam(esame3);
 
         System.out.println(s.getECTSAverage());
 

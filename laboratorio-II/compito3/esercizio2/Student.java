@@ -54,14 +54,21 @@ public class Student {
         int votSum = 0;
         for (AbstractExam abstractExam : exams) {
             if (abstractExam.getGrade() > 17) {
+                System.out.println("Credits: " + abstractExam.getCredits());
+                System.out.println("Grade: " + abstractExam.getGrade());
                 cfuSum += abstractExam.getCredits();
                 votSum += abstractExam.getGrade() * abstractExam.getCredits();
             }
         }
 
+        System.out.println("cfuSum: " + cfuSum);
+        System.out.println("votSum: " + votSum);
+
         if (cfuSum == 0)
             return 0;
-        return (int) Math.round((double) votSum / (double) cfuSum);
+        return ((double) votSum / cfuSum);
+
+        // return (((double) votSum) / cfuSum);
     }
 
     public int compareTo(Student s) {
