@@ -8,6 +8,14 @@ public class Articolo {
 
     private static HashMap<String, Integer> articoliValues;
 
+    /**
+     * Crea un articolo
+     * Mette la value di default a 1 se il tipo manca nella lista
+     * 
+     * @param t Tipo dell'articolo
+     * @param p Peso dell'articolo
+     * @param v Volume dell'articolo
+     */
     Articolo(String t, int p, int v) {
         tipo = t;
         peso = p;
@@ -19,24 +27,47 @@ public class Articolo {
         articoliValues.putIfAbsent(t, 1);
     }
 
+    /**
+     * Assegna (sostituendo se già presente) il valore nella hashmap
+     * 
+     * @param tipo         tipo di cui settare il valore
+     * @param nuovo_valore valore
+     */
     static void assegna_valore(String tipo, int nuovo_valore) {
         if (articoliValues == null)
             articoliValues = new HashMap<String, Integer>();
         articoliValues.put(tipo, nuovo_valore);
     }
 
+    /**
+     * 
+     * @return Tipo articolo
+     */
     public String getTipo() {
         return tipo;
     }
 
+    /**
+     * 
+     * @return Peso articolo
+     */
     public int getPeso() {
         return peso;
     }
 
+    /**
+     * 
+     * @return Volume articolo
+     */
     public int getVolume() {
         return volume;
     }
 
+    /**
+     * 
+     * @param a articolo di cui controllare il valore legato al tipo
+     * @return Valore del tipo dell'articolo a
+     */
     public static int getValore(Articolo a) {
         return articoliValues.get(a.getTipo());
     }
