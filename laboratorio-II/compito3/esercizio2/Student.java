@@ -25,12 +25,15 @@ public class Student {
     }
 
     public void addExam(AbstractExam examA) {
-        for (AbstractExam abstractExam : exams) {
-            if (abstractExam.getExamName().equals(examA.getExamName())) {
-                exams.remove(abstractExam);
-            }
+        int index = -1;
+        for (int i = 0; i < exams.size(); i++) {
+            if (exams.get(i).getExamName().equals(examA.getExamName()))
+                index = i;
         }
-        exams.add(examA);
+        if (index == -1)
+            exams.add(examA);
+        else
+            exams.set(index, examA);
     }
 
     public int getYear() {
@@ -54,15 +57,10 @@ public class Student {
         int votSum = 0;
         for (AbstractExam abstractExam : exams) {
             if (abstractExam.getGrade() > 17) {
-                System.out.println("Credits: " + abstractExam.getCredits());
-                System.out.println("Grade: " + abstractExam.getGrade());
                 cfuSum += abstractExam.getCredits();
                 votSum += abstractExam.getGrade() * abstractExam.getCredits();
             }
         }
-
-        System.out.println("cfuSum: " + cfuSum);
-        System.out.println("votSum: " + votSum);
 
         if (cfuSum == 0)
             return 0;
