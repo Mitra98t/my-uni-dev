@@ -8,7 +8,14 @@ class Main {
 		Magazzino m = new Magazzino();
 		m.rifornisci("elenco.csv");
 		System.out.println(m);
-
+		Articolo motos = new Articolo("motosega", 50, 10);
+		System.out.println(m.disponibile(motos));
+		try {
+			m.prendi1(motos);
+		} catch (Exception e) {
+			//TODO: handle exception
+		}
+		System.out.println(m.disponibile(motos));
 		/*
 		 * Il codice qui sopra dovrebbe generare un
 		 * output simile al seguente (dipende da come avete

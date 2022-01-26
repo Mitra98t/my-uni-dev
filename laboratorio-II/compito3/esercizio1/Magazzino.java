@@ -38,7 +38,7 @@ public class Magazzino {
     }
 
     boolean disponibile(Articolo a) {
-        return quantita.containsKey(a);
+        return quantita.containsKey(a) && quantita.get(a) >= 1;
     }
 
     int prendi1(Articolo a) throws OutOfStock {
