@@ -1,6 +1,9 @@
 import java.util.HashMap;
 import java.util.Objects;
 
+/**
+ * Uso HashMap staticamente assicurandomi che venga instanziata una volta sola per legare il tipo al valore 
+ */
 public class Articolo {
     private String tipo;
     private int peso;

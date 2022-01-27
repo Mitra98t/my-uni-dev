@@ -69,7 +69,16 @@ public class Zaino {
     void riempi(Magazzino m) {
         boolean alreadyThere = false;
         List<Articolo> items = m.disponibili();
-        items.sort(artComparator);
+        items.sort((Articolo i1, Articolo i2) -> {
+            if (Articolo.getValore(i1) != Articolo.getValore(i2))
+                return Articolo.getValore(i2) - Articolo.getValore(i1);
+            else if (i1.getPeso() != i2.getPeso())
+                return i1.getPeso() - i2.getPeso();
+            else if (i1.getVolume() != i2.getVolume())
+                return i1.getVolume() - i2.getVolume();
+
+            return 0;
+        });
 
         System.out.println("\nLISTA ORDINATA PER ZAINO\n");
         for (Articolo articolo : items) {
@@ -94,30 +103,6 @@ public class Zaino {
             alreadyThere = false;
         }
     }
-
-    public static Comparator<Articolo> artComparator = new Comparator<Articolo>() {
-
-        public int compare(Articolo s1, Articolo s2) {
-            if (Articolo.getValore(s1) > Articolo.getValore(s2))
-                return -1;
-            else if (Articolo.getValore(s1) < Articolo.getValore(s2))
-                return 1;
-            else {
-                if (s1.getPeso() > s2.getPeso())
-                    return 1;
-                else if (s1.getPeso() < s2.getPeso())
-                    return -1;
-                else {
-                    if (s1.getVolume() > s2.getVolume())
-                        return 1;
-                    else if (s1.getVolume() < s2.getVolume())
-                        return -1;
-                    else
-                        return 0;
-                }
-            }
-        }
-    };
 
     public String toString() {
         String res = "";

@@ -5,9 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Classe Magazzino
+ * Uso HashMap per gestire la quantità di un articolo contenuto nel magazzino.
+ */
 public class Magazzino {
     private HashMap<Articolo, Integer> quantita;
-
+    
     Magazzino() {
         quantita = new HashMap<Articolo, Integer>();
     }
