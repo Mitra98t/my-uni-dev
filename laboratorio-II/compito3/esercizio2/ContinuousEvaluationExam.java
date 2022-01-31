@@ -9,12 +9,7 @@ public class ContinuousEvaluationExam extends AbstractExam {
         continuousEvaluationGrades = new ArrayList<>();
     }
 
-    // TODO: rimuovere questo metodo
-    public List<Integer> getContinuousEvaluationGrades() {
-        return continuousEvaluationGrades;
-    }
-
-    void addContinuousEvaluationGrade(int g) throws IllegalArgumentException {
+    public void addContinuousEvaluationGrade(int g) throws IllegalArgumentException {
         if (g >= 0 && g <= 30)
             continuousEvaluationGrades.add(g);
         else

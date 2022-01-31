@@ -1,4 +1,4 @@
-class Main {
+public class Main {
 	public static void main(String[] args) {
 
 		Articolo.assegna_valore("tenda", 10);
@@ -7,20 +7,12 @@ class Main {
 		Articolo.assegna_valore("notebook", 2);
 		Magazzino m = new Magazzino();
 		m.rifornisci("elenco.csv");
-		System.out.println(m);
-		Articolo motos = new Articolo("motosega", 50, 10);
-		System.out.println(m.disponibile(motos));
-		try {
-			m.prendi1(motos);
-		} catch (Exception e) {
-			//TODO: handle exception
-		}
-		System.out.println(m.disponibile(motos));
+		for (Articolo a : m.disponibili())
+			System.out.println(a);
 		/*
 		 * Il codice qui sopra dovrebbe generare un
 		 * output simile al seguente (dipende da come avete
 		 * definito il metodo toString in Articolo)
-		 * 
 		 * 
 		 * borraccia, 2, 1, (1)
 		 * borraccia, 10, 5, (1)
@@ -42,7 +34,7 @@ class Main {
 		 * torcia, 5, 3, (4)
 		 * 
 		 */
-
 		System.out.println("--- bye -----");
+
 	}
 }

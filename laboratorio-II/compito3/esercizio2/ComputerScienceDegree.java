@@ -11,11 +11,11 @@ public class ComputerScienceDegree {
         students = new ArrayList<>();
     }
 
-    void addStudent(Student s) {
+    public void addStudent(Student s) {
         students.add(s);
     }
 
-    void load(String filename) throws IOException {
+    public void load(String filename) throws IOException {
         try (BufferedReader bf = new BufferedReader(new FileReader(filename))) {
             String riga = "";
             String[] values;
@@ -49,7 +49,7 @@ public class ComputerScienceDegree {
         }
     }
 
-    int getYearlyStudents(int year) throws IllegalArgumentException {
+    public int getYearlyStudents(int year) throws IllegalArgumentException {
         if (year > 0 && year < 4) {
             int res = 0;
             for (Student student : students) {
@@ -61,7 +61,7 @@ public class ComputerScienceDegree {
         }
     }
 
-    Student getTopStudentPerYear(int year) throws IllegalArgumentException {
+    public Student getTopStudentPerYear(int year) throws IllegalArgumentException {
         if (year > 0 && year < 4) {
             Student bestS = null;
             if (students.size() > 0) {
@@ -84,29 +84,4 @@ public class ComputerScienceDegree {
         }
     }
 
-    // @Override
-    // public String toString() {
-    // String res = "";
-    // for (Student student : students) {
-    // res += "S name: " + student.getName() + "\n";
-    // res += "S matr: " + student.getStudentNumber() + "\n";
-    // for (AbstractExam exam : student.getExams()) {
-    // if (exam instanceof WrittenAndOralExam w) {
-    // res += "wo name: " + w.getExamName() + "\n";
-    // res += "wo Wgra: " + w.getWrittenGrade() + "\n";
-    // res += "wo Ogra: " + w.getOralGrade() + "\n";
-    // res += "credit: " + w.getCredits() + "\n";
-    // } else if (exam instanceof ContinuousEvaluationExam w) {
-    // res += "co name: " + w.getExamName() + "\n";
-    // for (Integer grades : w.getContinuousEvaluationGrades()) {
-    // res += "co Cgra: " + grades + "\n";
-    // }
-    // res += "co Ogra: " + w.getOralGrade() + "\n";
-    // res += "credit: " + w.getCredits() + "\n";
-    // }
-    // }
-    // res += "\n";
-    // }
-    // return res;
-    // }
 }

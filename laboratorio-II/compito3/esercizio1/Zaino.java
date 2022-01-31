@@ -9,7 +9,7 @@ public class Zaino {
     private int curV;
     private List<Articolo> contains;
 
-    Zaino(int p, int v) {
+    public Zaino(int p, int v) {
         maxP = p;
         maxV = v;
         curP = 0;
@@ -17,11 +17,11 @@ public class Zaino {
         contains = new ArrayList<>();
     }
 
-    boolean puo_contenere(Articolo a) {
+    public boolean puo_contenere(Articolo a) {
         return maxP - curP >= a.getPeso() && maxV - curV >= a.getVolume();
     }
 
-    void aggiungi(Articolo a) throws NoWay {
+    public void aggiungi(Articolo a) throws NoWay {
         if (puo_contenere(a)) {
             contains.add(a);
             curV += a.getVolume();
@@ -30,11 +30,11 @@ public class Zaino {
             throw new NoWay();
     }
 
-    void svuota() {
+    public void svuota() {
         contains.clear();
     }
 
-    int peso() {
+    public int peso() {
         int res = 0;
         for (Articolo articolo : contains) {
             res += articolo.getPeso();
@@ -42,7 +42,7 @@ public class Zaino {
         return res;
     }
 
-    int volume() {
+    public int volume() {
         int res = 0;
         for (Articolo articolo : contains) {
             res += articolo.getVolume();
@@ -50,7 +50,7 @@ public class Zaino {
         return res;
     }
 
-    int valore() {
+    public int valore() {
         int res = 0;
         for (Articolo articolo : contains) {
             res += Articolo.getValore(articolo);
@@ -58,7 +58,7 @@ public class Zaino {
         return res;
     }
 
-    boolean contiene_tipo(String t) {
+    public boolean contiene_tipo(String t) {
         for (Articolo articolo : contains) {
             if (articolo.getTipo().compareTo(t) == 0)
                 return true;
@@ -66,7 +66,7 @@ public class Zaino {
         return false;
     }
 
-    void riempi(Magazzino m) {
+    public void riempi(Magazzino m) {
         boolean alreadyThere = false;
         List<Articolo> items = m.disponibili();
         items.sort((Articolo i1, Articolo i2) -> {
@@ -79,12 +79,6 @@ public class Zaino {
 
             return 0;
         });
-
-        System.out.println("\nLISTA ORDINATA PER ZAINO\n");
-        for (Articolo articolo : items) {
-            System.out.println(articolo);
-        }
-        System.out.println("\nLISTA ORDINATA PER ZAINO\n");
 
         for (Articolo articolo : items) {
             for (Articolo articolo2 : contains) {

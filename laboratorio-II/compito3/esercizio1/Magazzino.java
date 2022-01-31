@@ -12,11 +12,11 @@ import java.util.Map;
 public class Magazzino {
     private HashMap<Articolo, Integer> quantita;
 
-    Magazzino() {
+    public Magazzino() {
         quantita = new HashMap<Articolo, Integer>();
     }
 
-    int aggiungi(Articolo a, int q) {
+    public int aggiungi(Articolo a, int q) {
         int oldQ = 0;
 
         if (quantita.containsKey(a))
@@ -26,7 +26,7 @@ public class Magazzino {
         return oldQ + q;
     }
 
-    void rifornisci(String filename) {
+    public void rifornisci(String filename) {
         try (BufferedReader bf = new BufferedReader(new FileReader(filename))) {
             String riga;
             while ((riga = bf.readLine()) != null) {
@@ -41,11 +41,11 @@ public class Magazzino {
         }
     }
 
-    boolean disponibile(Articolo a) {
+    public boolean disponibile(Articolo a) {
         return quantita.containsKey(a) && quantita.get(a) >= 1;
     }
 
-    int prendi1(Articolo a) throws OutOfStock {
+    public int prendi1(Articolo a) throws OutOfStock {
         if (quantita.containsKey(a)) {
             int oldQ = 0;
             oldQ = quantita.get(a);
@@ -58,7 +58,7 @@ public class Magazzino {
         throw new OutOfStock();
     }
 
-    int volume_tot() {
+    public int volume_tot() {
         int totalVolume = 0;
         for (Map.Entry<Articolo, Integer> set : quantita.entrySet()) {
             totalVolume += set.getValue() * set.getKey().getVolume();
@@ -66,7 +66,7 @@ public class Magazzino {
         return totalVolume;
     }
 
-    List<Articolo> disponibili() {
+    public List<Articolo> disponibili() {
         List<Articolo> res = new ArrayList<>();
         for (Map.Entry<Articolo, Integer> set : quantita.entrySet()) {
             if (set.getValue() > 0) {
