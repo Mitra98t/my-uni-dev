@@ -8,6 +8,7 @@ import java.util.Map;
 /**
  * Classe Magazzino
  * Uso HashMap per gestire la quantità di un articolo contenuto nel magazzino.
+ * Trovo la hashmap una struttura dati adeguata perché utilizzo l'articolo come chiave in modo tale da poter gestire una mappa chiave valore
  */
 public class Magazzino {
     private HashMap<Articolo, Integer> quantita;

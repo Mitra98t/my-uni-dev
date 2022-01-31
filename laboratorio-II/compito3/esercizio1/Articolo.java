@@ -3,6 +3,7 @@ import java.util.Objects;
 
 /**
  * Uso HashMap staticamente assicurandomi che venga instanziata una volta sola per legare il tipo al valore 
+ * Trovo la hasmap una struttura dati adeguata in quanto permette di creare una mappa chiave valore.
  */
 public class Articolo {
     private String tipo;
