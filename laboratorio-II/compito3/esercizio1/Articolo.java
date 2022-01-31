@@ -9,7 +9,7 @@ public class Articolo {
     private int peso;
     private int volume;
 
-    private static HashMap<String, Integer> articoliValues;
+    private static final HashMap<String, Integer> articoliValues = new HashMap<String, Integer>();
 
     /**
      * Crea un articolo
@@ -19,13 +19,10 @@ public class Articolo {
      * @param p Peso dell'articolo
      * @param v Volume dell'articolo
      */
-    Articolo(String t, int p, int v) {
+    public Articolo(String t, int p, int v) {
         tipo = t;
         peso = p;
         volume = v;
-
-        if (articoliValues == null)
-            articoliValues = new HashMap<String, Integer>();
 
         articoliValues.putIfAbsent(t, 1);
     }
@@ -36,9 +33,7 @@ public class Articolo {
      * @param tipo         tipo di cui settare il valore
      * @param nuovo_valore valore
      */
-    static void assegna_valore(String tipo, int nuovo_valore) {
-        if (articoliValues == null)
-            articoliValues = new HashMap<String, Integer>();
+    public static void assegna_valore(String tipo, int nuovo_valore) {
         articoliValues.put(tipo, nuovo_valore);
     }
 

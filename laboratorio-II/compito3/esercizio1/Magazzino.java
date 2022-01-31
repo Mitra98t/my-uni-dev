@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class Magazzino {
     private HashMap<Articolo, Integer> quantita;
-    
+
     Magazzino() {
         quantita = new HashMap<Articolo, Integer>();
     }
@@ -28,13 +28,13 @@ public class Magazzino {
 
     void rifornisci(String filename) {
         try (BufferedReader bf = new BufferedReader(new FileReader(filename))) {
-            String riga = bf.readLine();
-            while (riga != null) {
+            String riga;
+            while ((riga = bf.readLine()) != null) {
                 String[] values = riga.split(",");
                 Articolo toAdd = new Articolo(values[0], Integer.parseInt(values[1]), Integer.parseInt(values[2]));
-                if (Integer.parseInt(values[3]) > 0)
+                if (Integer.parseInt(values[3]) > 0) {
                     aggiungi(toAdd, Integer.parseInt(values[3]));
-                riga = bf.readLine();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
