@@ -66,9 +66,12 @@ void lsToFile(char *pathToFile)
                 close(fd); // non mi serve più quello vecchio ora che lo ho copiato su 1
                 close(pfd[0]);
                 close(pfd[1]);
-                printf("Numero di elementi in ls\n\n"); // Stampo in out qualcosa che viene inserito nel fd di pippo.txt
-                fflush(stdout);                         // fflush di stdout perche altrimenti exec lo ignora
-                execlp("wc", "wc", "-l", (char *)NULL); // eseguo l'exec quindi stampo ls in pippo.txt
+                // Stampo in out qualcosa che viene inserito nel fd di pippo.txt
+                printf("Numero di elementi in ls\n\n");
+                // fflush di stdout perche altrimenti exec lo ignora
+                fflush(stdout);
+                // eseguo l'exec quindi stampo ls in pippo.txt
+                execlp("wc", "wc", "-l", (char *)NULL);
             }
         }
         break;

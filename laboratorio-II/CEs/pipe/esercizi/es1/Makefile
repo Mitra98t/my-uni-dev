@@ -1,0 +1,17 @@
+objects = exe
+cfile = passwdCutSort.c
+executable = execut
+executecommand = ./$(executable)
+
+
+PHONY: clean, $(objects)
+
+$(objects): $(executable)
+	@$(executecommand)
+
+$(executable): $(cfile)
+	@gcc -Wall $^ -o $@ 
+
+clean:
+	rm -f $(executable)
+	rm -f *.o

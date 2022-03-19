@@ -1,3 +1,0 @@
-Numero di elementi in ls
-
-       4
