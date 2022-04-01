@@ -16,8 +16,7 @@
 #include <sys/time.h>
 
 
-static int  
-;
+static int  N;
 static int  stop;
 static unsigned long t0; // tempo iniziale
 
