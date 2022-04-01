@@ -1,4 +1,4 @@
---------------------------------------------
+---
 
 RW-simple.c: versione base, con precedenza sempre ai lettori
              (gli scrittori possono rimanere in attesa infinita).
