@@ -16,7 +16,8 @@
 #include <sys/time.h>
 
 
-static int  N;
+static int  
+;
 static int  stop;
 static unsigned long t0; // tempo iniziale
 
@@ -135,34 +136,34 @@ int main(int argc, char* argv[]) {
   stop = W;
   t0   = getusec();
 
-  pthread_t* readers     = malloc(R*sizeof(pthread_t));
-  pthread_t* writers     = malloc(W*sizeof(pthread_t));
+  pthread_t* readers     = malloc(R*sizeof(pthread_t)); // alloca memoria destinata ai readers
+  pthread_t* writers     = malloc(W*sizeof(pthread_t)); // alloca memoria destinata ai writers
   if (!readers || !writers) {
     fprintf(stderr, "not enough memory\n");
     return -1;
   }
  
   for(long i=0; i<W; ++i)
-    if (pthread_create(&writers[i], NULL, Writer, (void*)i) != 0) {
+    if (pthread_create(&writers[i], NULL, Writer, (void*)i) != 0) { // Creazione di W writers
       fprintf(stderr, "pthread_create Writer failed\n");
       return -1;
     }
   for(long i=0; i<R; ++i)
-    if (pthread_create(&readers[i], NULL, Reader, (void*)i) != 0) {
+    if (pthread_create(&readers[i], NULL, Reader, (void*)i) != 0) { // Creazione di R readers
       fprintf(stderr, "pthread_create Reader failed\n");
       return -1;
     }		
   for(long i=0;i<R; ++i)
-    if (pthread_join(readers[i], NULL) == -1) {
+    if (pthread_join(readers[i], NULL) == -1) { // chiude i readers
       fprintf(stderr, "pthread_join failed\n");
     }
   for(long i=0;i<W; ++i)
-    if (pthread_join(writers[i], NULL) == -1) {
+    if (pthread_join(writers[i], NULL) == -1) { // chiude i writers
       fprintf(stderr, "pthread_join failed\n");
     }
   
-  free(writers);
-  free(readers);
+  free(writers); // Libero memoria destinata ai writers
+  free(readers); // Libero memoria destinata ai readers
   return 0;   
   
 }
