@@ -93,13 +93,13 @@ void *Reader(void *arg)
   {
     startRead();
 
-    printf("READER%ld ENTRATO in sezione critica t=%.2f\n", id, (getusec() - t0) / 1000.0);
+    printf("READER %ld ENTRATO in sezione critica t=%.2f\n", id, (getusec() - t0) / 1000.0);
     work(2000);
-    printf("READER%ld USCITO dalla sezione critica\n", id);
+    printf("READER %ld USCITO dalla sezione critica\n", id);
 
     doneRead();
   }
-  printf("READER%ld TERMINATO\n", id);
+  printf("READER %ld TERMINATO\n", id);
   return NULL;
 }
 
@@ -111,9 +111,9 @@ void *Writer(void *arg)
   {
     startWrite();
 
-    printf("WRITER%ld ENTRATO in sezione critica t=%.2f\n", id, (getusec() - t0) / 1000.0);
+    printf("WRITER %ld ENTRATO in sezione critica t=%.2f\n", id, (getusec() - t0) / 1000.0);
     work(6000);
-    printf("WRITER%ld USCITO dalla sezione critica\n", id);
+    printf("WRITER %ld USCITO dalla sezione critica\n", id);
 
     if (i + 1 == N)
       --stop;
@@ -121,7 +121,7 @@ void *Writer(void *arg)
     doneWriter();
   }
 
-  printf("WRITER%ld TERMINATO\n", id);
+  printf("WRITER %ld TERMINATO\n", id);
   return NULL;
 }
 
