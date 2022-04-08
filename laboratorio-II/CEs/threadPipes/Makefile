@@ -12,13 +12,13 @@ INCLUDES	= -I. -I ./utils/includes
 LDFLAGS 	= -L.
 LIBS            = -lrt -lpthread
 
-TARGETS		= pipeline
+TARGETS		= main
 
 
 .PHONY: all clean cleanall
 .SUFFIXES: .c .h
 
-pipeline: pipeline.o unboundedqueue.o
+pipeline: main.o unboundedqueue.o
 	$(CC) $(CFLAGS) $(INCLUDES) $(OPTFLAGS) -o $@ $^ $(LIBS)
 all		: $(TARGETS)
 
