@@ -60,22 +60,17 @@ void *TH1(void *args)
     ssize_t read;
     argTh1 *stru = (argTh1 *)args;
 
-    printf("In THREAD 1: %s\n", stru->file);
-
     ptr = fopen(stru->file, "r");
 
     if (ptr == NULL)
     {
-        printf("errore?\n");
         push(stru->q1, "<<ERROR");
         return NULL;
     }
 
     while ((read = getline(&line, &len, ptr)) != -1)
     {
-        printf("Line: %s\n", line);
-        fflush(stdout);
-        push(stru->q1, line);
+        push(stru->q1, strdup(line));
     }
 
     push(stru->q1, "<<EOF");
@@ -92,7 +87,7 @@ void *TH2(void *args)
 
     const char s[2] = " ";
 
-    while ((line = pop(stru->q2)) != NULL)
+    while ((line = strdup(pop(stru->q1))) != NULL)
     {
         if (strcmp(line, "<<ERROR") == 0)
         {
