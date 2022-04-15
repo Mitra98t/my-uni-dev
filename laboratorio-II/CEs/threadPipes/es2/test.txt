@@ -1,5 +1,4 @@
-Ciao come va?
-Io tutto bene
-Che bello!
-Ecco qua divere parole tokenizzate
-Che carino che ci sono riuscito
+ciao bene ange
+marco ciao fede  
+fede bene ange  
+ange marco ciao

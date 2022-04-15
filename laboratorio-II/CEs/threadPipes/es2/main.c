@@ -3,7 +3,22 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <semaphore.h>
+#include <sys/time.h>
+#include <ctype.h>
 #include "unboundedqueue.h"
+#include "icl_hash.h"
+
+int is_empty(const char *s)
+{
+    while (*s != '\0')
+    {
+        if (!isspace((unsigned char)*s))
+            return 0;
+        s++;
+    }
+    return 1;
+}
 
 void *TH1(void *);
 void *TH2(void *);
@@ -18,8 +33,17 @@ typedef struct
 typedef struct
 {
     Queue_t *q1;
-    Queue_t *q2;
+    icl_hash_t *ht;
+    sem_t *sem;
+    int *errF;
 } argTh2;
+
+typedef struct
+{
+    icl_hash_t *ht;
+    sem_t *sem;
+    int *errF;
+} argTh3;
 
 int main(int argc, char const *argv[])
 {
@@ -29,6 +53,10 @@ int main(int argc, char const *argv[])
     pthread_t threads[3];
     Queue_t *q1 = initQueue();
     Queue_t *q2 = initQueue();
+    icl_hash_t *ht = icl_hash_create(100, hash_pjw, string_compare);
+    sem_t semp;
+    sem_init(&semp, 0, 0);
+    int errFB = 0;
 
     argTh1 *args1 = (argTh1 *)malloc(sizeof(argTh1));
     args1->file = strdup(file);
@@ -37,10 +65,16 @@ int main(int argc, char const *argv[])
 
     argTh2 *args2 = (argTh2 *)malloc(sizeof(argTh2));
     args2->q1 = q1;
-    args2->q2 = q2;
+    args2->ht = ht;
+    args2->sem = &semp;
+    args2->errF = &errFB;
     pthread_create(&threads[1], NULL, TH2, args2);
 
-    pthread_create(&threads[2], NULL, TH3, q2);
+    argTh3 *args3 = (argTh3 *)malloc(sizeof(argTh3));
+    args3->ht = ht;
+    args3->sem = &semp;
+    args3->errF = &errFB;
+    pthread_create(&threads[2], NULL, TH3, args3);
 
     for (int i = 0; i < 3; i++)
     {
@@ -91,14 +125,12 @@ void *TH2(void *args)
     {
         if (strcmp(line, "<<ERROR") == 0)
         {
-            push(stru->q2, "<<ERROR");
+            *(stru->errF) = 1;
+            sem_post(stru->sem);
             return NULL;
         }
         if (strcmp(line, "<<EOF") == 0)
-        {
-            push(stru->q2, "<<EOF");
             break;
-        }
         char *token;
 
         /* get the first token */
@@ -107,27 +139,33 @@ void *TH2(void *args)
         /* walk through other tokens */
         while (token != NULL)
         {
-            push(stru->q2, token);
-
+            token[strcspn(token, "\n")] = 0;
+            if (!is_empty(token))
+                icl_hash_insert(stru->ht, (void *)token, (void *)token);
             token = strtok(NULL, s);
         }
     }
+    sem_post(stru->sem);
+
     return NULL;
 }
 void *TH3(void *args)
 {
-    Queue_t *q2 = (Queue_t *)args;
+    icl_entry_t *bucket, *curr;
+    argTh3 *stru = (argTh3 *)args;
     char *line = NULL;
-    while ((line = pop(q2)) != NULL)
-    {
-        if (strcmp(line, "<<ERROR") == 0)
-        {
-            return NULL;
-        }
-        if (strcmp(line, "<<EOF") == 0)
-            break;
+    sem_wait(stru->sem);
 
-        printf("%s\n", line);
+    if (*(stru->errF))
+        return NULL;
+
+    for (int i = 0; i < stru->ht->nbuckets; i++)
+    {
+        if (stru->ht->buckets[i] != NULL)
+        {
+            printf("%s\n", (char *)stru->ht->buckets[i]->key);
+            fflush(stdout);
+        }
     }
     return NULL;
 }
