@@ -12,10 +12,22 @@
 #include "unboundedqueue.h"
 
 #define EOJ_STR "<<EOJ"
+#define EOFS_STR "<<EOFS"
 
 int string_compare(void *a, void *b)
 {
     return (strcmp((char *)a, (char *)b) == 0);
+}
+
+int is_empty(const char *s)
+{
+    while (*s != '\0')
+    {
+        if (!isspace((unsigned char)*s))
+            return 0;
+        s++;
+    }
+    return 1;
 }
 
 void *THP(void *);
@@ -23,18 +35,23 @@ void *THW(void *);
 
 typedef struct
 {
-    char *files;
+    Queue_t *files;
     Queue_t *q;
     sem_t *sem;
-    Queue_t *col1;
-    Queue_t *col2;
+    Queue_t *results;
 } thp_t;
+
 typedef struct
 {
     Queue_t *q;
-    Queue_t *col1;
-    Queue_t *col2;
+    Queue_t *results;
 } thw_t;
+
+typedef struct
+{
+    int col1;
+    int col2;
+} res_t;
 
 int main(int argc, char const *argv[])
 {
@@ -46,27 +63,23 @@ int main(int argc, char const *argv[])
     thp_t *argP = malloc(sizeof(thp_t));
     thw_t *argW = malloc(sizeof(thw_t));
     Queue_t *fileQ = initQueue();
-    Queue_t *col1Q = initQueue();
-    Queue_t *col2Q = initQueue();
-    char *fileList = "";
+    Queue_t *resultsList = initQueue();
+    Queue_t *fileList = initQueue();
     sem_t semp;
     sem_init(&semp, 0, 0);
 
     for (int i = 2; i < argc; i++)
     {
-        strcat(fileList, argv[i]);
-        if (i + 1 != argc)
-            strcat(fileList, "|");
+        push(fileList, strdup(argv[i]));
     }
+    push(fileList, strdup(EOFS_STR));
 
-    argP->col1 = col1Q;
-    argP->col2 = col2Q;
-    argP->files = strdup(fileList);
+    argP->results = resultsList;
+    argP->files = fileList;
     argP->q = fileQ;
     argP->sem = &semp;
 
-    argW->col1 = col1Q;
-    argW->col2 = col2Q;
+    argW->results = resultsList;
     argW->q = fileQ;
 
     pthread_create(&produttore, NULL, THP, argP);
@@ -81,6 +94,7 @@ int main(int argc, char const *argv[])
         pthread_join(workers[i], NULL);
     }
 
+    printf("chiusi\n");
     sem_post(&semp);
 
     pthread_join(produttore, NULL);
@@ -91,28 +105,30 @@ int main(int argc, char const *argv[])
 void *THP(void *args)
 {
     thp_t *stru = (thp_t *)args;
-    char *token = strtok(stru->files, "|");
-    while (token != NULL)
+    char *fileName;
+    while ((fileName = pop(stru->files)) != NULL)
     {
+        if (string_compare(fileName, EOFS_STR))
+            break;
         struct stat path_stat;
-        stat(token, &path_stat);
+        stat(fileName, &path_stat);
         if (S_ISREG(path_stat.st_mode))
-            push(stru->q, strdup(token));
-        token = strtok(NULL, "|");
-    }
-
-    push(stru->q, EOJ_STR);
+            push(stru->q, strdup(fileName));
+    };
+    push(stru->q, strdup(EOJ_STR));
 
     sem_wait(stru->sem);
     int final1 = 0, final2 = 0;
-    char *read = NULL;
-    while ((read = pop(stru->col1)) != NULL)
+    void *read = NULL;
+    res_t *readStruct = malloc(sizeof(res_t));
+    while ((read = pop(stru->results)) != NULL)
     {
-        final1 += atoi(read);
-    }
-    while ((read = pop(stru->col1)) != NULL)
-    {
-        final2 += atoi(read);
+        if (string_compare((char *)read, EOJ_STR))
+            break;
+
+        readStruct = read;
+        final1 += readStruct->col1;
+        final2 += readStruct->col2;
     }
     printf("Colonna 1: %d - Colonna 2: %d\n", final1, final2);
     fflush(stdout);
@@ -127,8 +143,11 @@ void *THW(void *args)
     size_t len = 0;
     ssize_t read;
     int col1Val = 0, col2Val = 0;
+
+    res_t *resStruct = NULL;
     while ((file = pop(stru->q)) != NULL)
     {
+        printf("file: %s\n", file);
         if (string_compare(file, EOJ_STR))
             break;
 
@@ -138,14 +157,27 @@ void *THW(void *args)
 
         while ((read = getline(&line, &len, ptr)) != -1)
         {
+            if (is_empty(line))
+                continue;
+            printf("Line %s", line);
             char *token = strtok(line, ",");
             col1Val += atoi(token);
             token = strtok(NULL, ",");
             col2Val += atoi(token);
+            printf("col1: %d - col2: %d\n", col1Val, col2Val);
         }
-        push(stru->col1, (void *)col1Val);
-        push(stru->col2, (void *)col2Val);
+        resStruct = malloc(sizeof(res_t));
+        printf("struct pointer: %p\n", &resStruct);
+        resStruct->col1 = col1Val;
+        resStruct->col2 = col2Val;
+        col1Val = 0;
+        col2Val = 0;
+        push(stru->results, resStruct);
+        printf("fine file: %s\n", file);
     }
+    printf("out While\n");
+
+    push(stru->results, EOJ_STR);
     push(stru->q, EOJ_STR);
     return NULL;
 }
