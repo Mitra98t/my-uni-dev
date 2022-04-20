@@ -94,7 +94,6 @@ int main(int argc, char const *argv[])
         pthread_join(workers[i], NULL);
     }
 
-    printf("chiusi\n");
     sem_post(&semp);
 
     pthread_join(produttore, NULL);
@@ -147,7 +146,6 @@ void *THW(void *args)
     res_t *resStruct = NULL;
     while ((file = pop(stru->q)) != NULL)
     {
-        printf("file: %s\n", file);
         if (string_compare(file, EOJ_STR))
             break;
 
@@ -159,23 +157,18 @@ void *THW(void *args)
         {
             if (is_empty(line))
                 continue;
-            printf("Line %s", line);
             char *token = strtok(line, ",");
             col1Val += atoi(token);
             token = strtok(NULL, ",");
             col2Val += atoi(token);
-            printf("col1: %d - col2: %d\n", col1Val, col2Val);
         }
         resStruct = malloc(sizeof(res_t));
-        printf("struct pointer: %p\n", resStruct);
         resStruct->col1 = col1Val;
         resStruct->col2 = col2Val;
         col1Val = 0;
         col2Val = 0;
         push(stru->results, resStruct);
-        printf("fine file: %s\n", file);
     }
-    printf("out While\n");
 
     push(stru->results, EOJ_STR);
     push(stru->q, EOJ_STR);
