@@ -40,35 +40,38 @@ int main(int argc, char const *argv[])
     if (argc != 2)
         return 1;
 
-    letts = argv[1];
+    letts = atoi(argv[1]);
 
     Queue_t *queue = initQueue();
     char *baseMsg = "messaggio!!";
-    int n = 15;
+    int n = 3;
 
     pthread_t produttore;
     pthread_t lettore[letts];
 
     th1_t *argomentiProd = (th1_t *)malloc(sizeof(th1_t));
+    th2_t *argomentiLett = (th2_t *)malloc(letts * sizeof(th2_t));
 
     argomentiProd->msgBase = strdup(baseMsg);
     argomentiProd->msgs = n;
     argomentiProd->q = queue;
-
     pthread_create(&produttore, NULL, TH1, argomentiProd);
 
     for (int i = 0; i < letts; i++)
     {
-        th2_t *argomentiLett = (th1_t *)malloc(sizeof(th2_t));
-        argomentiLett->q = queue;
-        argomentiLett->id = i;
-        pthread_create(&lettore[i], NULL, TH2, argomentiLett);
+        argomentiLett[i].q = queue;
+        argomentiLett[i].id = i;
+    }
+
+    for (int i = 0; i < letts; i++)
+    {
+        pthread_create(&lettore[i], NULL, TH2, &argomentiLett[i]);
     }
 
     pthread_join(produttore, NULL);
     for (int i = 0; i < letts; i++)
-        pthread_join(lettore, NULL);
-        
+        pthread_join(lettore[i], NULL);
+
     return 0;
 }
 
@@ -97,5 +100,6 @@ void *TH2(void *args)
         printf("id: %d -> Ho letto: %s\n", stru->id, line);
     }
     push(stru->q, strdup(EOJ_STR));
+    printf("Id: %d in chiusura\n", stru->id);
     return NULL;
 }
