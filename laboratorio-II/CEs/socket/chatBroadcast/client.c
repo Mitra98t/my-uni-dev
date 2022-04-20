@@ -11,7 +11,7 @@
 #include <errno.h>
 #include <string.h>
 
-#define IP "131.114.22.172" // server
+#define IP "131.114.218.232" // server
 // #define IP "10.101.34.121" // pcProf
 // #define IP "127.0.0.1" //locale
 #define PORT 7777
