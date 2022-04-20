@@ -120,7 +120,7 @@ void *THP(void *args)
     sem_wait(stru->sem);
     int final1 = 0, final2 = 0;
     void *read = NULL;
-    res_t *readStruct = malloc(sizeof(res_t));
+    res_t *readStruct; // = malloc(sizeof(res_t));
     while ((read = pop(stru->results)) != NULL)
     {
         if (string_compare((char *)read, EOJ_STR))
@@ -167,7 +167,7 @@ void *THW(void *args)
             printf("col1: %d - col2: %d\n", col1Val, col2Val);
         }
         resStruct = malloc(sizeof(res_t));
-        printf("struct pointer: %p\n", &resStruct);
+        printf("struct pointer: %p\n", resStruct);
         resStruct->col1 = col1Val;
         resStruct->col2 = col2Val;
         col1Val = 0;
