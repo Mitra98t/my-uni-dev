@@ -19,8 +19,14 @@ typedef struct
 {
     int start;
     int stop;
+    int id;
     Queue_t *q;
 } th1_t;
+typedef struct
+{
+    int id;
+    Queue_t *q;
+} th2_t;
 
 int main(int argc, char const *argv[])
 {
@@ -35,18 +41,30 @@ int main(int argc, char const *argv[])
     Queue_t *que = initQueue();
 
     int start = 0, chunk = k / m, r = k % m;
-    th1_t *args1 = (th1_t *)malloc(sizeof(th1_t));
-    args1->q = que;
+    th1_t *argsThreads = malloc(m * sizeof(th1_t));
+    th2_t *args2Threads = malloc(n * sizeof(th2_t));
+    printf("CHUNK: %d - RESTO: %d\n", chunk, r);
+    for (int i = 0; i < m; ++i)
+    {
+        argsThreads[i].id = i;
+        argsThreads[i].q = que;
+        argsThreads[i].start = start;
+        argsThreads[i].stop = start + chunk + ((i < r) ? 1 : 0);
+        start = argsThreads[i].stop;
+    }
+    for (int i = 0; i < n; ++i)
+    {
+        args2Threads[i].id = i;
+        args2Threads[i].q = que;
+    }
+
     for (int i = 0; i < m; i++)
     {
-        args1->start = start;
-        args1->stop = args1->start + chunk + (i < r ? 1 : 0);
-        pthread_create(&scrittori[i], NULL, TH1, args1);
-        start = args1->stop;
+        pthread_create(&scrittori[i], NULL, TH1, &argsThreads[i]);
     }
     for (int i = 0; i < n; i++)
     {
-        pthread_create(&lettori[i], NULL, TH1, que);
+        pthread_create(&lettori[i], NULL, TH2, &args2Threads[i]);
     }
 
     for (int i = 0; i < m; i++)
@@ -73,26 +91,31 @@ void *TH1(void *args)
     th1_t *stru = (th1_t *)args;
     // char *str = "Th: ";
     char buffer[100];
+
+    printf("SCRITTORE id%d - start: %d - stop: %d\n", stru->id, stru->start, stru->stop);
+
     for (int i = stru->start; i < stru->stop; i++)
     {
-        sprintf(buffer, "Th: %ld --- msg: %d\n", pthread_self(), i);
-        push(stru->q, buffer);
+        sprintf(buffer, "Th: id%d --- msg: %d\n", stru->id, i);
+        push(stru->q, strdup(buffer));
     }
     return NULL;
 }
 
 void *TH2(void *args)
 {
-    Queue_t *q1 = (Queue_t *)args;
+    th2_t *stru = (th2_t *)args;
     char *line = NULL;
     int letti = 0;
     for (;;)
     {
-        line = strdup(pop(q1));
+        line = strdup(pop(stru->q));
         if (string_compare(line, EOF_STR))
             return NULL;
 
-        printf("#%d - lett %ld: %s\n", letti, pthread_self(), line);
+        letti++;
+
+        printf("#%d - th: id%d ---> MESSAGGIO: %s\n", letti, stru->id, line);
         fflush(stdout);
     }
     return NULL;
