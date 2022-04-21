@@ -1,0 +1,3 @@
+# Exp Rec
+
+Esponenziale Ricosivo.
