@@ -80,6 +80,7 @@ int main(int argc, char const *argv[])
 
     pthread_create(&masterThread, NULL, masterTH, argMaster);
 
+    pthread_join(masterThread, NULL);
     return 0;
 }
 
