@@ -27,7 +27,13 @@ typedef struct
     BQueue_t *q;
 } mTh_t;
 
+typedef struct
+{
+    BQueue_t *q;
+} wTh_t;
+
 void *masterTH(void *);
+void *workerTH(void *);
 
 int main(int argc, char const *argv[])
 {
@@ -97,4 +103,9 @@ void *masterTH(void *args)
     }
 
     return NULL;
+}
+
+void *workerTH(void *args)
+{
+
 }
