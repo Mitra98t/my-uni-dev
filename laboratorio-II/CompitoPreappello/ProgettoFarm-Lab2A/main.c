@@ -115,7 +115,7 @@ int main(int argc, char const *argv[])
 
     for (int i = 0; i < n; i++)
     {
-        pthread_create(&workerThread[i], NULL, masterTH, &argWorkers[i]);
+        pthread_create(&workerThread[i], NULL, workerTH, &argWorkers[i]);
     }
 
     pthread_join(masterThread, NULL);
@@ -132,10 +132,12 @@ void *masterTH(void *args)
 
     for (int i = 0; i < stru->filesCount; i++)
     {
-        is_regular_file(stru->files[i]);
-        push(stru->q, stru->files[i]);
-        printf("pushing file: %s\n", stru->files[i]);
-        usleep(stru->t * 1000);
+        if (is_regular_file(stru->files[i]))
+        {
+            push(stru->q, strdup(stru->files[i]));
+            printf("pushing file: %s\n", stru->files[i]);
+            usleep(stru->t * 1000);
+        }
     }
 
     push(stru->q, EOJ_STR);
@@ -150,21 +152,32 @@ void *workerTH(void *args)
     char *filePath = NULL;
     ssize_t readB;
     long *temp;
-    temp = (long *)malloc(sizeof(temp));
+    temp = (long *)malloc(sizeof(long));
     int numCount = 0;
     long result = 0;
+
     while ((filePath = pop(stru->q)) != NULL)
     {
+        printf("Read: %s\n", filePath);
         if (string_compare(filePath, EOJ_STR))
             break;
         numCount = 0;
+        result = 0;
+        ptr = fopen(filePath, "r");
         while ((readB = fread(temp, sizeof(long), 1, ptr)) != 0)
         {
-            result += numCount * *temp;
+            result += numCount * (*temp);
             numCount++;
         }
+
         printf("File: %s - Result: %ld\n", filePath, result);
+        fclose(ptr);
     }
     push(stru->q, EOJ_STR);
     return NULL;
 }
+
+/*
+file1.dat -> 945
+file2.dat -> 225
+*/
