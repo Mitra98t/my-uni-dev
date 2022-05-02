@@ -56,11 +56,14 @@ void *workerTH(void *);
 
 int main(int argc, char const *argv[])
 {
+
     int n = 4;
     int q = 8;
     int t = 0;
+
     char **files = NULL;
     int fileCount = 0;
+
     for (int i = 1; i < argc; i++)
     {
         if (strcmp(argv[i], "-n") == 0)
@@ -93,36 +96,52 @@ int main(int argc, char const *argv[])
         printf("%s\n", files[i]);
     }
 
-    BQueue_t *queue = initBQueue(n);
-
-    pthread_t masterThread;
-    pthread_t workerThread[n];
-    mTh_t *argMaster = (mTh_t *)malloc(sizeof(mTh_t));
-
-    wTh_t *argWorkers = (wTh_t *)malloc(n * sizeof(wTh_t));
-
-    for (int i = 0; i < n; i++)
+    pid_t pid;
+    int status;
+    switch (pid = fork())
     {
-        argWorkers[i].q = queue;
+    case -1:
+        perror("cannot fork");
+        break;
+    case 0:
+    {
+        // PADRE
+        BQueue_t *queue = initBQueue(n);
+        pthread_t masterThread;
+        pthread_t workerThread[n];
+        mTh_t *argMaster = (mTh_t *)malloc(sizeof(mTh_t));
+        wTh_t *argWorkers = (wTh_t *)malloc(n * sizeof(wTh_t));
+
+        for (int i = 0; i < n; i++)
+        {
+            argWorkers[i].q = queue;
+        }
+
+        argMaster->files = files;
+        argMaster->filesCount = fileCount;
+        argMaster->q = queue;
+        argMaster->t = t;
+
+        pthread_create(&masterThread, NULL, masterTH, argMaster);
+
+        for (int i = 0; i < n; i++)
+        {
+            pthread_create(&workerThread[i], NULL, workerTH, &argWorkers[i]);
+        }
+
+        pthread_join(masterThread, NULL);
+        for (int i = 0; i < n; i++)
+        {
+            pthread_join(workerThread[i], NULL);
+        }
+        break;
+    }
+    default:
+        // FIGLIO
+        
+        break;
     }
 
-    argMaster->files = files;
-    argMaster->filesCount = fileCount;
-    argMaster->q = queue;
-    argMaster->t = t;
-
-    pthread_create(&masterThread, NULL, masterTH, argMaster);
-
-    for (int i = 0; i < n; i++)
-    {
-        pthread_create(&workerThread[i], NULL, workerTH, &argWorkers[i]);
-    }
-
-    pthread_join(masterThread, NULL);
-    for (int i = 0; i < n; i++)
-    {
-        pthread_join(workerThread[i], NULL);
-    }
     return 0;
 }
 
