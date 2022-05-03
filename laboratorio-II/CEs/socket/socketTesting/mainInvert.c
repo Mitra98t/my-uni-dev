@@ -114,6 +114,13 @@ void *clientTH(void *args)
     int fd_skt = socket(AF_UNIX, SOCK_STREAM, 0);
     while (connect(fd_skt, (struct sockaddr *)&stru->sa, sizeof(stru->sa)) == -1)
     {
+        
+        /*
+        if (errno == 111 || errno == 2)
+            ...
+        else
+            perror(...)
+        */
         if (errno == ENOENT)
             sleep(1); /* sock non esiste */
         else
