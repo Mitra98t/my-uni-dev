@@ -40,6 +40,12 @@
 #define UNIX_PATH_MAX 108
 #define N 512
 
+#define DEBUGG 0
+
+#define printf_F(s) \
+    if(DEBUGG)      \
+        s;
+
 int string_compare(void *a, void *b)
 {
     return (strcmp((char *)a, (char *)b) == 0);
@@ -75,7 +81,7 @@ typedef struct
 typedef struct
 {
     long val;
-    char *fName;
+    char fName[255];
 } data_t;
 
 void *masterTH(void *);
@@ -187,11 +193,11 @@ int main(int argc, char const *argv[])
             argsServer[workerCount].id = workerCount;
             argsServer[workerCount].fdc = fd_c;
             pthread_create(&serverWorker[workerCount], NULL, serverWorkerTH, &argsServer[workerCount]);
-            printf("Opening server worker th #%d\n", workerCount);
+            printf_F(printf("Opening server worker th #%d\n", workerCount));
             workerCount++;
         }
 
-        printf("After opening server workers\n");
+        printf_F(printf("After opening server workers\n"));
 
         for (int i = 0; i < workerCount; i++)
         {
@@ -217,7 +223,7 @@ void *masterTH(void *args)
         if (is_regular_file(stru->files[i]))
         {
             push(stru->q, strdup(stru->files[i]));
-            printf("pushing file to queue: %s\n", stru->files[i]);
+            printf_F(printf("pushing file to queue: %s\n", stru->files[i]));
             usleep(stru->t * 1000);
         }
     }
@@ -257,7 +263,7 @@ void *workerTH(void *args)
 
     while ((filePath = pop(stru->q)) != NULL)
     {
-        printf("Read from queue: %s\n", filePath);
+        printf_F(printf("Read from queue: %s\n", filePath));
         if (string_compare(filePath, EOJ_STR))
             break;
         numCount = 0;
@@ -269,12 +275,12 @@ void *workerTH(void *args)
             numCount++;
         }
         data_t *toSend = (data_t *)malloc(sizeof(data_t));
-        toSend->fName = strdup(filePath);
+        strcpy(toSend->fName, filePath);
         toSend->val = result;
         write(fd_skt, toSend, sizeof(data_t));
         // write(fd_skt, "c\0", 2);
-        printf("write on soket - size %d\n", sizeof(data_t));
-        printf("write on soket File: %s - Result: %ld\n", filePath, result);
+        printf_F(printf("write on soket - size %d\n", sizeof(data_t)));
+        printf_F(printf("write on soket File: %s - Result: %ld\n", filePath, result));
         fclose(ptr);
     }
 
@@ -286,11 +292,11 @@ void *serverWorkerTH(void *args)
 {
     sTh_t *stru = (sTh_t *)args;
     data_t *recived = (data_t *)malloc(sizeof(data_t));
-    printf("Inside server Worker %d\n", stru->id);
+    printf_F(printf("Inside server Worker %d\n", stru->id));
     int a = 0;
     while ((a = read(stru->fdc, recived, sizeof(data_t))) != 0)
     {
-        printf("valore a: %d - size %d\n", a, sizeof(data_t));
+        printf_F(printf("valore a: %d - size %d\n", a, sizeof(data_t)));
         printf("STAMPA DI RISULTATO %ld %s\n", recived->val, recived->fName);
     }
     // char *buf = (char *)malloc(sizeof(char) * 256);
@@ -303,5 +309,6 @@ void *serverWorkerTH(void *args)
 
 /*
 file1.dat -> 945
-file2.dat -> 225
+file2.dat -> 2225
+file3.dat -> 3560
 */
