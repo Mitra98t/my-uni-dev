@@ -43,7 +43,7 @@
 #define DEBUGG 0
 
 #define printf_F(s) \
-    if(DEBUGG)      \
+    if (DEBUGG)     \
         s;
 
 int string_compare(void *a, void *b)
@@ -99,6 +99,8 @@ int main(int argc, char const *argv[])
     int n = 4;
     int q = 8;
     int t = 0;
+
+    int R;
 
     char **files = NULL;
     int fileCount = 0;
@@ -162,28 +164,31 @@ int main(int argc, char const *argv[])
         argMaster->q = queue;
         argMaster->t = t;
 
-        pthread_create(&masterThread, NULL, masterTH, argMaster);
+        SYSCALL_EXIT(pthread_create, R, pthread_create(&masterThread, NULL, masterTH, argMaster), "Master Thread Creation");
+        // pthread_create(&masterThread, NULL, masterTH, argMaster);
 
         for (int i = 0; i < n; i++)
         {
-            pthread_create(&workerThread[i], NULL, workerTH, &argWorkers[i]);
+            SYSCALL_EXIT(pthread_create, R, pthread_create(&workerThread[i], NULL, workerTH, &argWorkers[i]), "Worker Thread Creation");
+            // pthread_create(&workerThread[i], NULL, workerTH, &argWorkers[i]);
         }
 
-        pthread_join(masterThread, NULL);
+        SYSCALL_EXIT(pthread_join, R, pthread_join(masterThread, NULL), "Join Thread Master");
         for (int i = 0; i < n; i++)
         {
-            pthread_join(workerThread[i], NULL);
+            SYSCALL_EXIT(pthread_join, R, pthread_join(workerThread[i], NULL), "Join Thread Master");
         }
 
-        unlink(SOCKNAME);
+        SYSCALL_EXIT(unlink, R, unlink(SOCKNAME), "Unlink in Father");
         break;
     }
     default:
         // FIGLIO
-        fd_skt = socket(AF_UNIX, SOCK_STREAM, 0);
-        bind(fd_skt, (struct sockaddr *)&sa, sizeof(sa));
+        SYSCALL_EXIT(socket, R, fd_skt = socket(AF_UNIX, SOCK_STREAM, 0), "Socket Creaton");
+        // fd_skt = socket(AF_UNIX, SOCK_STREAM, 0);
+        SYSCALL_EXIT(bind, R, bind(fd_skt, (struct sockaddr *)&sa, sizeof(sa)), "Bind Socket");
 
-        listen(fd_skt, SOMAXCONN);
+        SYSCALL_EXIT(listen, R, listen(fd_skt, SOMAXCONN), "Listen on Socket");
         pthread_t serverWorker[n];
         sTh_t *argsServer = (sTh_t *)malloc(n * sizeof(sTh_t));
         int workerCount = 0;
@@ -192,7 +197,7 @@ int main(int argc, char const *argv[])
         {
             argsServer[workerCount].id = workerCount;
             argsServer[workerCount].fdc = fd_c;
-            pthread_create(&serverWorker[workerCount], NULL, serverWorkerTH, &argsServer[workerCount]);
+            SYSCALL_EXIT(pthread_create, R, pthread_create(&serverWorker[workerCount], NULL, serverWorkerTH, &argsServer[workerCount]), "Create Thread ServerWorker");
             printf_F(printf("Opening server worker th #%d\n", workerCount));
             workerCount++;
         }
@@ -201,12 +206,13 @@ int main(int argc, char const *argv[])
 
         for (int i = 0; i < workerCount; i++)
         {
-            pthread_join(serverWorker[i], NULL);
+            SYSCALL_EXIT(pthread_join, R, pthread_join(serverWorker[i], NULL), "Join Thread ServerWorker");
         }
 
-        close(fd_skt);
-        close(fd_c);
-        unlink(SOCKNAME);
+        SYSCALL_EXIT(close, R, close(fd_skt), "Close fd_skt");
+        SYSCALL_EXIT(close, R, close(fd_c), "Close fd_c");
+        // SYSCALL_EXIT(unlink, R, unlink(SOCKNAME), "Unlink Socket Figlio");
+        // unlink(SOCKNAME);
         // exit(EXIT_SUCCESS);
         break;
     }
@@ -244,7 +250,8 @@ void *workerTH(void *args)
     int numCount = 0;
     long result = 0;
 
-    int fd_skt = socket(AF_UNIX, SOCK_STREAM, 0);
+    int fd_skt, R;
+    SYSCALL_EXIT(socket, R, fd_skt = socket(AF_UNIX, SOCK_STREAM, 0), "Socket in Thread Worker");
 
     while (connect(fd_skt, (struct sockaddr *)&stru->sa, sizeof(stru->sa)) == -1)
     {
@@ -277,7 +284,7 @@ void *workerTH(void *args)
         data_t *toSend = (data_t *)malloc(sizeof(data_t));
         strcpy(toSend->fName, filePath);
         toSend->val = result;
-        write(fd_skt, toSend, sizeof(data_t));
+        SYSCALL_EXIT(write, R, write(fd_skt, toSend, sizeof(data_t)), "Write to Socket");
         // write(fd_skt, "c\0", 2);
         printf_F(printf("write on soket - size %d\n", sizeof(data_t)));
         printf_F(printf("write on soket File: %s - Result: %ld\n", filePath, result));
@@ -299,11 +306,6 @@ void *serverWorkerTH(void *args)
         printf_F(printf("valore a: %d - size %d\n", a, sizeof(data_t)));
         printf("STAMPA DI RISULTATO %ld %s\n", recived->val, recived->fName);
     }
-    // char *buf = (char *)malloc(sizeof(char) * 256);
-    // while (read(stru->fdc, buf, 255) != 0)
-    // {
-    //     printf("STAMPA DI RISULTATO id%d - %s\n",stru->id, buf);
-    // }
     return NULL;
 }
 
@@ -311,4 +313,8 @@ void *serverWorkerTH(void *args)
 file1.dat -> 945
 file2.dat -> 2225
 file3.dat -> 3560
+*/
+
+/*
+clear && gcc -pthread -Wall -g boundedqueue.c main.c -o farm -I. -I utils/includes
 */
