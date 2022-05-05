@@ -88,6 +88,10 @@ void *masterTH(void *);
 void *workerTH(void *);
 void *serverWorkerTH(void *);
 
+void handlerGeneric();
+
+volatile sig_atomic_t intGive = 0;
+
 int main(int argc, char const *argv[])
 {
 
@@ -130,11 +134,11 @@ int main(int argc, char const *argv[])
         }
     }
 
-    printf("VALORI n: %d - q: %d - t: %d\n", n, q, t);
+    printf_F(printf("VALORI n: %d - q: %d - t: %d\n", n, q, t));
 
     for (int i = 0; i < fileCount; i++)
     {
-        printf("lista file #%d - %s\n", i, files[i]);
+        printf_F(printf("lista file #%d - %s\n", i, files[i]));
     }
 
     pid_t pid;
@@ -147,6 +151,31 @@ int main(int argc, char const *argv[])
     case 0:
     {
         // PADRE
+
+        struct sigaction s;
+
+        sigset_t set;
+        SYSCALL_EXIT(sigfillset, R, sigfillset(&set), "fillset");
+        SYSCALL_EXIT(pthread_sigmask, R, pthread_sigmask(SIG_SETMASK, &set, NULL), "pthread_sigmask");
+
+        SYSCALL_EXIT(sigemptyset, R, sigemptyset(&set), "emptyset");
+        sigaddset(&set, SIGINT);
+
+        // recupero il sigaction vecchio
+        SYSCALL_EXIT(sigaction, R, sigaction(SIGINT, NULL, &s), "sigaction1");
+
+        // lo modifico
+        s.sa_mask = set;
+        // applico coi sigaction i nuovi handler
+        s.sa_handler = handlerGeneric;
+        SYSCALL_EXIT(sigaction, R, sigaction(SIGINT, &s, NULL), "sigaction2");
+
+        s.sa_handler = handlerGeneric;
+        SYSCALL_EXIT(sigaction, R, sigaction(SIGTSTP, &s, NULL), "sigaction3");
+
+        SYSCALL_EXIT(sigemptyset, R, sigemptyset(&set), "emptyset");
+        SYSCALL_EXIT(pthread_sigmask, R, pthread_sigmask(SIG_SETMASK, &set, NULL), "pthread_sigmask");
+
         BQueue_t *queue = initBQueue(n);
         pthread_t masterThread;
         pthread_t workerThread[n];
@@ -183,7 +212,13 @@ int main(int argc, char const *argv[])
         break;
     }
     default:
+    {
         // FIGLIO
+
+        sigset_t maskSig;
+        sigfillset(&maskSig);
+        pthread_sigmask(SIG_BLOCK, &maskSig, NULL);
+
         SYSCALL_EXIT(socket, R, fd_skt = socket(AF_UNIX, SOCK_STREAM, 0), "Socket Creaton");
         // fd_skt = socket(AF_UNIX, SOCK_STREAM, 0);
         SYSCALL_EXIT(bind, R, bind(fd_skt, (struct sockaddr *)&sa, sizeof(sa)), "Bind Socket");
@@ -216,6 +251,7 @@ int main(int argc, char const *argv[])
         // exit(EXIT_SUCCESS);
         break;
     }
+    }
 
     return 0;
 }
@@ -228,9 +264,12 @@ void *masterTH(void *args)
     {
         if (is_regular_file(stru->files[i]))
         {
+            if (i)
+                usleep(stru->t * 1000);
             push(stru->q, strdup(stru->files[i]));
             printf_F(printf("pushing file to queue: %s\n", stru->files[i]));
-            usleep(stru->t * 1000);
+            if (intGive)
+                break;
         }
     }
 
@@ -309,11 +348,12 @@ void *serverWorkerTH(void *args)
     return NULL;
 }
 
-/*
-file1.dat -> 945
-file2.dat -> 2225
-file3.dat -> 3560
-*/
+void handlerGeneric()
+{
+    intGive = 1;
+    printf("\n");
+    fflush(stdout);
+}
 
 /*
 clear && gcc -pthread -Wall -g boundedqueue.c main.c -o farm -I. -I utils/includes
