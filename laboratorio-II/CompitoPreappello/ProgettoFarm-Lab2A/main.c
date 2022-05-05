@@ -217,8 +217,8 @@ int main(int argc, char const *argv[])
         // FIGLIO
 
         sigset_t maskSig;
-        sigfillset(&maskSig);
-        pthread_sigmask(SIG_BLOCK, &maskSig, NULL);
+        SYSCALL_EXIT(sigfillset, R, sigfillset(&maskSig), "Fillset Child Process");
+        SYSCALL_EXIT(pthread_sigmask, R, pthread_sigmask(SIG_BLOCK, &maskSig, NULL), "Sigmask Child Process");
 
         SYSCALL_EXIT(socket, R, fd_skt = socket(AF_UNIX, SOCK_STREAM, 0), "Socket Creaton");
         // fd_skt = socket(AF_UNIX, SOCK_STREAM, 0);
