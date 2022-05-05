@@ -345,7 +345,7 @@ void *serverWorkerTH(void *args)
     while ((a = read(stru->fdc, recived, sizeof(data_t))) != 0)
     {
         printf_F(printf("valore a: %d - size %d\n", a, sizeof(data_t)));
-        printf("--> %ld %s\n", recived->val, recived->fName);
+        printf("%ld %s\n", recived->val, recived->fName);
     }
     return NULL;
 }
