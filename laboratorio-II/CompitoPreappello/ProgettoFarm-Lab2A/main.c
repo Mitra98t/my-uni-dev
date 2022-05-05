@@ -153,13 +153,12 @@ int main(int argc, char const *argv[])
         // PADRE
 
         struct sigaction s;
-
         sigset_t set;
         SYSCALL_EXIT(sigfillset, R, sigfillset(&set), "fillset");
         SYSCALL_EXIT(pthread_sigmask, R, pthread_sigmask(SIG_SETMASK, &set, NULL), "pthread_sigmask");
 
-        SYSCALL_EXIT(sigemptyset, R, sigemptyset(&set), "emptyset");
-        sigaddset(&set, SIGINT);
+        // SYSCALL_EXIT(sigemptyset, R, sigemptyset(&set), "emptyset");
+        // sigaddset(&set, SIGINT);
 
         // recupero il sigaction vecchio
         SYSCALL_EXIT(sigaction, R, sigaction(SIGINT, NULL, &s), "sigaction1");
@@ -173,6 +172,8 @@ int main(int argc, char const *argv[])
         SYSCALL_EXIT(sigaction, R, sigaction(SIGINT, &s, NULL), "sigaction2");
         SYSCALL_EXIT(sigaction, R, sigaction(SIGQUIT, &s, NULL), "sigaction3");
         SYSCALL_EXIT(sigaction, R, sigaction(SIGTERM, &s, NULL), "sigaction3");
+
+        signal(SIGPIPE, SIG_IGN);
 
         SYSCALL_EXIT(sigemptyset, R, sigemptyset(&set), "emptyset");
         SYSCALL_EXIT(pthread_sigmask, R, pthread_sigmask(SIG_SETMASK, &set, NULL), "pthread_sigmask");
@@ -265,12 +266,12 @@ void *masterTH(void *args)
     {
         if (access(stru->files[i], F_OK) == 0 && is_regular_file(stru->files[i]))
         {
-            if (i)
-                usleep(stru->t * 1000);
-            push(stru->q, strdup(stru->files[i]));
-            printf_F(printf("pushing file to queue: %s\n", stru->files[i]));
             if (intGive)
                 break;
+            push(stru->q, strdup(stru->files[i]));
+            printf_F(printf("pushing file to queue: %s\n", stru->files[i]));
+            if (i != stru->filesCount-1)
+                usleep(stru->t * 1000);
         }
     }
 
