@@ -67,7 +67,7 @@ int main(int argc, char const *argv[])
     EC(pthread_create(&threadBello, NULL, belTH, NULL), "creazione thread bello");
 
     EC(pthread_join(threadBello, NULL), "join thread");
-    printf("simone gay\n");
+    printf("simone bello\n");
 
     return 0;
 }
