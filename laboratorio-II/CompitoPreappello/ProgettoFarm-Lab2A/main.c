@@ -168,10 +168,11 @@ int main(int argc, char const *argv[])
         s.sa_mask = set;
         // applico coi sigaction i nuovi handler
         s.sa_handler = handlerGeneric;
+        // SIGHUP, SIGINT, SIGQUIT, SIGTERM
+        SYSCALL_EXIT(sigaction, R, sigaction(SIGHUP, &s, NULL), "sigaction3");
         SYSCALL_EXIT(sigaction, R, sigaction(SIGINT, &s, NULL), "sigaction2");
-
-        s.sa_handler = handlerGeneric;
-        SYSCALL_EXIT(sigaction, R, sigaction(SIGTSTP, &s, NULL), "sigaction3");
+        SYSCALL_EXIT(sigaction, R, sigaction(SIGQUIT, &s, NULL), "sigaction3");
+        SYSCALL_EXIT(sigaction, R, sigaction(SIGTERM, &s, NULL), "sigaction3");
 
         SYSCALL_EXIT(sigemptyset, R, sigemptyset(&set), "emptyset");
         SYSCALL_EXIT(pthread_sigmask, R, pthread_sigmask(SIG_SETMASK, &set, NULL), "pthread_sigmask");
@@ -262,7 +263,7 @@ void *masterTH(void *args)
 
     for (int i = 0; i < stru->filesCount; i++)
     {
-        if (is_regular_file(stru->files[i]))
+        if (access(stru->files[i], F_OK) == 0 && is_regular_file(stru->files[i]))
         {
             if (i)
                 usleep(stru->t * 1000);
@@ -343,7 +344,7 @@ void *serverWorkerTH(void *args)
     while ((a = read(stru->fdc, recived, sizeof(data_t))) != 0)
     {
         printf_F(printf("valore a: %d - size %d\n", a, sizeof(data_t)));
-        printf("STAMPA DI RISULTATO %ld %s\n", recived->val, recived->fName);
+        printf("--> %ld %s\n", recived->val, recived->fName);
     }
     return NULL;
 }
