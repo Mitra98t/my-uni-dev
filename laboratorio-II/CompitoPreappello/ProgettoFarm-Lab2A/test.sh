@@ -93,4 +93,7 @@ else
 fi
 
 # possibile altro comando per verificare eventuali memory leaks
-#valgrind --leak-check=full --error-exitcode=1 --log-file=/dev/null ./farm file* 2>&1 > /dev/null
+# valgrind --leak-check=full --error-exitcode=1 --log-file=/dev/null ./farm file* 2>&1 > /dev/null
+
+
+# valgrind --leak-check=full ./farm file100.dat

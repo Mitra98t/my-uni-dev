@@ -51,6 +51,14 @@ int string_compare(void *a, void *b)
     return (strcmp((char *)a, (char *)b) == 0);
 }
 
+char *copyString(char *dest, const char *src)
+{
+    dest = malloc(strlen(src) + 1);
+    strcpy(dest, src);
+    return dest;
+}
+
+
 typedef struct
 {
     int filesCount;
@@ -121,8 +129,10 @@ int main(int argc, char const *argv[])
         }
         else
         {
-            files = realloc(files, sizeof(char) * 255);
-            files[fileCount] = strdup(argv[i]);
+            files = realloc(files, sizeof(char *) * (fileCount + 1));
+            // files[fileCount] = malloc(strlen(argv[i]) + 1);
+            // strcpy(files[fileCount], argv[i]);
+            files[fileCount] = copyString(files[fileCount], argv[i]);
             fileCount++;
         }
     }
@@ -204,6 +214,10 @@ int main(int argc, char const *argv[])
         }
 
         SYSCALL_EXIT(unlink, R, unlink(SOCKNAME), "Unlink in Father");
+
+        free(argMaster);
+        free(argWorkers);
+        deleteBQueue(queue, NULL);
         break;
     }
     default:
@@ -241,6 +255,8 @@ int main(int argc, char const *argv[])
 
         SYSCALL_EXIT(close, R, close(fd_skt), "Close fd_skt");
         SYSCALL_EXIT(close, R, close(fd_c), "Close fd_c");
+
+        free(argsServer);
         // SYSCALL_EXIT(unlink, R, unlink(SOCKNAME), "Unlink Socket Figlio");
         // unlink(SOCKNAME);
         // exit(EXIT_SUCCESS);
@@ -248,13 +264,15 @@ int main(int argc, char const *argv[])
     }
     }
 
+    for (int i = 0; i < fileCount; i++)
+        free(files[i]);
+    free(files);
     return 0;
 }
 
 void *masterTH(void *args)
 {
     mTh_t *stru = (mTh_t *)args;
-
     for (int i = 0; i < stru->filesCount; i++)
     {
         // if (access(stru->files[i], F_OK) == 0 && isRegular(stru->files[i], NU-LL))
@@ -262,9 +280,11 @@ void *masterTH(void *args)
         {
             if (intGive)
                 break;
+
             push(stru->q, strdup(stru->files[i]));
             printf_F(printf("pushing file to queue: %s\n", stru->files[i]));
-            if (i != stru->filesCount-1)
+
+            if (i != stru->filesCount - 1)
                 usleep(stru->t * 1000);
         }
     }
@@ -320,11 +340,13 @@ void *workerTH(void *args)
         strcpy(toSend->fName, filePath);
         toSend->val = result;
         SYSCALL_EXIT(write, R, write(fd_skt, toSend, sizeof(data_t)), "Write to Socket");
-        // write(fd_skt, "c\0", 2);
-        printf_F(printf("write on soket - size %d\n", sizeof(data_t)));
+        printf_F(printf("write on soket - size %ld\n", sizeof(data_t)));
         printf_F(printf("write on soket File: %s - Result: %ld\n", filePath, result));
         fclose(ptr);
+        free(toSend);
     }
+
+    free(temp);
 
     push(stru->q, EOJ_STR);
     return NULL;
@@ -338,9 +360,10 @@ void *serverWorkerTH(void *args)
     int a = 0;
     while ((a = read(stru->fdc, recived, sizeof(data_t))) != 0)
     {
-        printf_F(printf("valore a: %d - size %d\n", a, sizeof(data_t)));
+        printf_F(printf("valore a: %d - size %ld\n", a, sizeof(data_t)));
         printf("%ld %s\n", recived->val, recived->fName);
     }
+    free(recived);
     return NULL;
 }
 
