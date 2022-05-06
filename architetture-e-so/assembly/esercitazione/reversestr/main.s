@@ -1,5 +1,5 @@
 .data
-str:    .string "pipino"
+str:    .string "parola"
 res:    .string "%s\n"
 .text
 .global main

@@ -1,5 +1,5 @@
 .data
-str:    .string "12c3acc4a5"
+str:    .string "12c3epc4a5"
 res:    .string "%d\n"
 
 .text
