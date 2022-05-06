@@ -23,7 +23,7 @@ class Persona {
     }
 
     fancyPrint(){
-        return `Ciao, mi chiamo ${this.nome} e ho ${this.eta}... ${this.#mood ? "Evvivaa!" : "Che palle-.-"}!`
+        return `Ciao, mi chiamo ${this.nome} e ho ${this.eta}... ${this.#mood ? "Evvivaa!" : "Che noia-.-"}!`
     }
 
     /**
