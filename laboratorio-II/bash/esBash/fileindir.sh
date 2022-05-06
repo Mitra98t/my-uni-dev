@@ -7,7 +7,7 @@ if [ $# = 2 ] ; then
             fi
         done
     else
-        echo "una dir santa madonna"
+        echo "una dir"
     fi
 else
     echo "mancano parametri"

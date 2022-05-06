@@ -34,7 +34,7 @@ class Graph <T>{
 
     addNode(n:node<T>):void{
         if(n.id < 0){
-            console.log("ID out of bound. Ti attacchi al cazzo cit. Botta")
+            console.log("ID out of bound.")
         }
         if(n.id < this.nodes.length){
             this.nodes[n.id] = n
@@ -43,7 +43,7 @@ class Graph <T>{
             this.addNodeByValue(n.value)
         }
         else{
-            console.log("ID out of bound. Ti attacchi al cazzo cit. Botta")
+            console.log("ID out of bound.")
         }
     }
 
