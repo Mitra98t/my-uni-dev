@@ -51,13 +51,6 @@ int string_compare(void *a, void *b)
     return (strcmp((char *)a, (char *)b) == 0);
 }
 
-int is_regular_file(const char *path)
-{
-    struct stat path_stat;
-    stat(path, &path_stat);
-    return S_ISREG(path_stat.st_mode);
-}
-
 typedef struct
 {
     int filesCount;
@@ -264,7 +257,8 @@ void *masterTH(void *args)
 
     for (int i = 0; i < stru->filesCount; i++)
     {
-        if (access(stru->files[i], F_OK) == 0 && is_regular_file(stru->files[i]))
+        // if (access(stru->files[i], F_OK) == 0 && isRegular(stru->files[i], NU-LL))
+        if (isRegular(stru->files[i], NULL) == 1)
         {
             if (intGive)
                 break;
