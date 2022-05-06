@@ -97,3 +97,5 @@ fi
 
 
 # valgrind --leak-check=full ./farm file100.dat
+
+# clear && gcc -pthread -Wall -g boundedqueue.c main.c -o farm -I. -I utils/includes && valgrind --leak-check=full --track-origins=yes ./farm file100.dat file20.dat  file2.dat  file15.dat
