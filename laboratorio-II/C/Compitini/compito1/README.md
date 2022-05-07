@@ -7,7 +7,7 @@ Stampare il prodotto di tutti i valori pari.
 
 ## Es 2
 
-Scrivere un programma che legge da standard input una parola, e la codifica utilizando il codice di Cesare con lunghezza 4. 
+Scrivere un programma che legge da standard input una parola, e la codifica utilizando il codice di Cesare con lunghezza 4.
 Si ricorda che il codice di Cesare di lunghezza  codifica un carattere  con il carattere che si trova a  posizioni dopo di  nel alfabeto, in modo circolare (A,B,C, ..., X,Y,Z,A,B,C...). Quindi per  la lettera 'A' diventa 'E' e la lettera 'Z' diventa 'D'. Tutte le lettere minuscole vanno trasformate in maiuscole prima di essere codificate. Il programma  contenere una funzione  che prende la parola originale e restituisce un altra stringa con la parola codificata. La funzione  chiama la funzione  e ne stampa il risultato. Si può considerare che tutte le parole inserite in input contengono solo caratteri alfabetici, e che le parole non possono contenere più di 15 caratteri.
 
 ## Es 3
