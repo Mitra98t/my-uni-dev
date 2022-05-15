@@ -23,7 +23,6 @@
 #define EOJ_STR "<<EOJ"
 #define SOCKNAME "./farm.sck"
 #define UNIX_PATH_MAX 108
-#define N 512
 
 #define DEBUGG 0
 
@@ -114,8 +113,6 @@ int main(int argc, char const *argv[])
         else
         {
             files = realloc(files, sizeof(char *) * (fileCount + 1));
-            // files[fileCount] = malloc(strlen(argv[i]) + 1);
-            // strcpy(files[fileCount], argv[i]);
             files[fileCount] = copyString(files[fileCount], argv[i]);
             fileCount++;
         }
@@ -129,7 +126,6 @@ int main(int argc, char const *argv[])
     }
 
     pid_t pid;
-    // int status;
     switch (pid = fork())
     {
     case -1:
@@ -144,17 +140,10 @@ int main(int argc, char const *argv[])
         SYSCALL_EXIT(sigfillset, R, sigfillset(&set), "fillset");
         SYSCALL_EXIT(pthread_sigmask, R, pthread_sigmask(SIG_SETMASK, &set, NULL), "pthread_sigmask");
 
-        // SYSCALL_EXIT(sigemptyset, R, sigemptyset(&set), "emptyset");
-        // sigaddset(&set, SIGINT);
-
-        // recupero il sigaction vecchio
         SYSCALL_EXIT(sigaction, R, sigaction(SIGINT, NULL, &s), "sigaction1");
 
-        // lo modifico
         s.sa_mask = set;
-        // applico coi sigaction i nuovi handler
         s.sa_handler = handlerGeneric;
-        // SIGHUP, SIGINT, SIGQUIT, SIGTERM
         SYSCALL_EXIT(sigaction, R, sigaction(SIGHUP, &s, NULL), "sigaction3");
         SYSCALL_EXIT(sigaction, R, sigaction(SIGINT, &s, NULL), "sigaction2");
         SYSCALL_EXIT(sigaction, R, sigaction(SIGQUIT, &s, NULL), "sigaction3");
@@ -183,19 +172,12 @@ int main(int argc, char const *argv[])
         argMaster->t = t;
 
         SYSCALL_EXIT(pthread_create, R, pthread_create(&masterThread, NULL, masterTH, argMaster), "Master Thread Creation");
-        // pthread_create(&masterThread, NULL, masterTH, argMaster);
-
         for (int i = 0; i < n; i++)
-        {
             SYSCALL_EXIT(pthread_create, R, pthread_create(&workerThread[i], NULL, workerTH, &argWorkers[i]), "Worker Thread Creation");
-            // pthread_create(&workerThread[i], NULL, workerTH, &argWorkers[i]);
-        }
 
         SYSCALL_EXIT(pthread_join, R, pthread_join(masterThread, NULL), "Join Thread Master");
         for (int i = 0; i < n; i++)
-        {
             SYSCALL_EXIT(pthread_join, R, pthread_join(workerThread[i], NULL), "Join Thread Master");
-        }
 
         SYSCALL_EXIT(unlink, R, unlink(SOCKNAME), "Unlink in Father");
 
@@ -213,7 +195,6 @@ int main(int argc, char const *argv[])
         SYSCALL_EXIT(pthread_sigmask, R, pthread_sigmask(SIG_BLOCK, &maskSig, NULL), "Sigmask Child Process");
 
         SYSCALL_EXIT(socket, R, fd_skt = socket(AF_UNIX, SOCK_STREAM, 0), "Socket Creaton");
-        // fd_skt = socket(AF_UNIX, SOCK_STREAM, 0);
         SYSCALL_EXIT(bind, R, bind(fd_skt, (struct sockaddr *)&sa, sizeof(sa)), "Bind Socket");
 
         SYSCALL_EXIT(listen, R, listen(fd_skt, SOMAXCONN), "Listen on Socket");
@@ -233,17 +214,12 @@ int main(int argc, char const *argv[])
         printf_F(printf("After opening server workers\n"));
 
         for (int i = 0; i < workerCount; i++)
-        {
             SYSCALL_EXIT(pthread_join, R, pthread_join(serverWorker[i], NULL), "Join Thread ServerWorker");
-        }
 
         SYSCALL_EXIT(close, R, close(fd_skt), "Close fd_skt");
         SYSCALL_EXIT(close, R, close(fd_c), "Close fd_c");
 
         free(argsServer);
-        // SYSCALL_EXIT(unlink, R, unlink(SOCKNAME), "Unlink Socket Figlio");
-        // unlink(SOCKNAME);
-        // exit(EXIT_SUCCESS);
         break;
     }
     }
@@ -259,7 +235,6 @@ void *masterTH(void *args)
     mTh_t *stru = (mTh_t *)args;
     for (int i = 0; i < stru->filesCount; i++)
     {
-        // if (access(stru->files[i], F_OK) == 0 && isRegular(stru->files[i], NU-LL))
         if (isRegular(stru->files[i], NULL) == 1)
         {
             if (intGive)
@@ -294,7 +269,7 @@ void *workerTH(void *args)
     while (connect(fd_skt, (struct sockaddr *)&stru->sa, sizeof(stru->sa)) == -1)
     {
         if (errno == ENOENT)
-            sleep(1); /* sock non esiste */
+            sleep(1); 
         else
             exit(EXIT_FAILURE);
     }
@@ -349,7 +324,3 @@ void handlerGeneric()
     printf("\n");
     fflush(stdout);
 }
-
-/*
-clear && gcc -pthread -Wall -g boundedqueue.c main.c -o farm -I. -I utils/includes
-*/
