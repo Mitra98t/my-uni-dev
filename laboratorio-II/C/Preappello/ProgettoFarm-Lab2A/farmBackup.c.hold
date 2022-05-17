@@ -1,18 +1,3 @@
-// #include <util.h>
-// #include <errno.h>
-// #include <dirent.h>
-// #include <pthread.h>
-// #include <stdio.h>
-// #include <string.h>
-// #include <stdlib.h>
-// #include <sys/types.h>
-// #include <sys/stat.h>
-// #include <unistd.h>
-// #include <semaphore.h>
-// #include <sys/time.h>
-// #include <ctype.h>
-// #include <signal.h>
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -57,7 +42,6 @@ char *copyString(char *dest, const char *src)
     strcpy(dest, src);
     return dest;
 }
-
 
 typedef struct
 {
@@ -281,9 +265,8 @@ void *masterTH(void *args)
             if (intGive)
                 break;
 
-            push(stru->q, strdup(stru->files[i]));
+            push(stru->q, stru->files[i]);
             printf_F(printf("pushing file to queue: %s\n", stru->files[i]));
-
             if (i != stru->filesCount - 1)
                 usleep(stru->t * 1000);
         }
@@ -301,7 +284,7 @@ void *workerTH(void *args)
     char *filePath = NULL;
     ssize_t readB;
     long *temp;
-    temp = (long *)malloc(sizeof(long));
+    temp = (long *)calloc(1, sizeof(long));
     int numCount = 0;
     long result = 0;
 
@@ -310,13 +293,6 @@ void *workerTH(void *args)
 
     while (connect(fd_skt, (struct sockaddr *)&stru->sa, sizeof(stru->sa)) == -1)
     {
-
-        /*
-        if (errno == 111 || errno == 2)
-            ...
-        else
-            perror(...)
-        */
         if (errno == ENOENT)
             sleep(1); /* sock non esiste */
         else
@@ -336,7 +312,7 @@ void *workerTH(void *args)
             result += numCount * (*temp);
             numCount++;
         }
-        data_t *toSend = (data_t *)malloc(sizeof(data_t));
+        data_t *toSend = (data_t *)calloc(1, sizeof(data_t));
         strcpy(toSend->fName, filePath);
         toSend->val = result;
         SYSCALL_EXIT(write, R, write(fd_skt, toSend, sizeof(data_t)), "Write to Socket");
