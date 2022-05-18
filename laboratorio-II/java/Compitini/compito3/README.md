@@ -1,8 +1,10 @@
-# Esercizio 1
+# Compito3 Lab II Java
+
+## Esercizio 1
 
 In questo esercizio dovete scrivere un programma per la gestione di articoli da campeggio.
 
-Gli articoli
+### Gli articoli
 
 Come prima cosa si deve definire la classe Articolo. Gli oggetti di tale classe sono caratterizzati da una stringa che ne indica il tipo (ad esempio "tenda", "bussola", etc), da un intero che ne indica il peso, e da un secondo intero che ne indica il volume.
 
@@ -10,91 +12,91 @@ Due articoli sono considerati uguali se e solo se hanno lo stesso tipo, peso e v
 
 Ogni tipo di oggetto ha assegnato un valore (notare il valore è assegnato al tipo quindi se il tipo "tenda" ha valore 10 tutte le tende, indipendentemente da peso e volume avranno quel valore). Nella classe Articolo esiste quindi una variabile di classe che associa ad ogni tipo un valore. Tale valore di default è 1, ma deve poter essere cambiato mediante il metodo di classe:
 
-static void assegna_valore(String tipo, int nuovo_valore);
+`static void assegna_valore(String tipo, int nuovo_valore);`
 
 Nota: è possibile assegnare un valore anche a dei tipi per i quali non esiste nessun articolo, quindi questo metodo non deve fare nessun controllo sul parametro tipo.
 
 Oltre a questo metodo di classe, la classe deve contenere almeno il costruttore:
 
-Articolo(String t, int p, int v)
+`Articolo(String t, int p, int v)`
 
 che costruisce un articolo di tipo t, peso p e volume v.
 
-Il magazzino
+### Il magazzino
 
 Come secondo compito si deve implementare una classe Magazzino che permetta di gestire una collezione di articoli (cioè istanze della classe Articolo). Per ogni articolo si deve tenere traccia di quanti esemplari ci sono in magazzino. In particolare la classe Magazzino deve supportare i seguenti metodi:
 
-Magazzino()
+`Magazzino()`
 
 Costruttore: costruisce un magazzino inizialmente vuoto, cioè senza nessun articolo.
 
-int aggiungi(Articolo a, int q)
+`int aggiungi(Articolo a, int q)`
 
 Aggiunge al magazzino q esemplari dell'articolo a; restituisce il numero di esemplari di a disponibili dopo l'aggiunta
 
-void rifornisci(String filename)
+`void rifornisci(String filename)`
 
 Aggiunge al magazzino gli articoli che sono indicati nel file di testo filename. Ogni riga del file si riferisce ad un articolo e contiene tipo, peso, volume, e quantità separati dalla virgola. Ad esempio, la riga:
 
-pannello solare,3,2,10
+`pannello solare,3,2,10`
 
 fa aggiungere al magazzino 10 articoli di tipo "pannello solare" di peso 3 e volume 2. Per semplicità assumete che non ci siano spazi prima e dopo la virgola. Per estrarre i dati da una linea in questo formato usate il metodo split della classe String e il metodo statico Integer.parseInt.
 
-boolean disponibile(Articolo a)
+`boolean disponibile(Articolo a)`
 
 Restituisce true se almeno un esemplare dell'articolo a è in magazzino
 
-int prendi1(Articolo a)
+`int prendi1(Articolo a)`
 
 Cerca di prendere un esemplare dell'articolo a se il magazzino non contiene l'articolo lancia l'eccezione OutOfStock, altrimenti l'articolo viene rimosso dal magazzino e viene restituito il numero di articoli disponibili dopo la rimozione
 
-List<Articolo> disponibili()
+`List<Articolo> disponibili()`
 
 Restituisce una lista degli articoli attualmente disponibili in magazzino (cioè una lista degli articoli di cui il magazzino ne contiene almeno un esemplare). La lista deve essere ordinata lessicograficamente per tipo, a parità di tipo per peso crescente, a parità di tipo e peso per volume crescente.
 
-int volume_tot()
+`int volume_tot()`
 
 Restituisce il volume totale di tutti gli articoli in magazzino (ricordare che ogni articolo ha un attributo volume)
 
-Lo zaino
+### Lo zaino
 
 Infine dovete implementare una classe Zaino. Anche uno zaino è semplicemente un qualcosa che può contenere degli articoli, ma i metodi richiesti sono diversi. Uno zaino è caratterizzato da due costanti pmax e vmax che indicano rispettivamente il peso massimo che può essere inserito nello zaino e il volume massimo che può essere contenuto nello zaino.
 
 Nella classe Zaino devono essere implementati i seguenti metodi:
 
-Zaino(int p, int v)
+`Zaino(int p, int v)`
 
 Costruttore: costruisce uno zaino inizalmente vuoto con peso massimno p e volume massimo v.
 
-  boolean puo_contenere(Articolo a)
+`boolean puo_contenere(Articolo a)`
 
 Restituisce true se lo zaino può contenere l'articolo a (cioe' se mettendo a nello zaino non si superano il peso o il volume massimi) false altrimenti
 
-void aggiungi(Articolo a)
+`void aggiungi(Articolo a)`
 
 se lo zaino può contenere l'articolo a lo aggiunge, altrimenti, se vengono superati i limiti di peso o volume, deve essere lanciata l'eccezione NoWay
 
-void svuota()
+`void svuota()`
 
 vuota lo zaino eliminando tutti gli articoli in esso contenuto
 
-int peso()
+`int peso()`
 
 restituisce il peso totale degli articoli nello zaino
 
-int volume()
+`int volume()`
 
 restituisce il volume totale degli articoli nello zaino
 
-int valore()
+`int valore()`
 
 restituisce il valore totale degli articoli nello zaino
 
-boolean contiene_tipo(String t)
+`boolean contiene_tipo(String t)`
 
 Restituisce true se lo zaino contiene un articolo di tipo t, false altrimenti. Notate che t è un tipo (ad esempio "tenda") non un'istanza di Articolo
 
-void riempi(Magazzino m)
+`void riempi(Magazzino m)`
 
 Aggiunge allo zaino degli articoli presi dal magazzino m secondo il seguente procedimento:
 
