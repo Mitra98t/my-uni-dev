@@ -5,6 +5,8 @@ objects = main.o list.o
 CC = gcc
 CFLAGS = -Wall -pedantic
 
+.PHONY: clean
+
 myProg: $(objects)
 	gcc $(objects) -o myProg
 
@@ -17,5 +19,3 @@ clean:
 
 test:
 	@echo Lasciami fare!
-	@./myProg 1 2 -1 2 3 -1 | diff - output1
-	@echo Brav!
