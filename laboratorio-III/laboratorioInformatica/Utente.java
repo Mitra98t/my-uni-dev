@@ -19,22 +19,22 @@ public abstract class Utente extends Thread implements Comparable<Utente> {
   public abstract String toString();
 
   public void run() {
-    try {
-      for (int i = 0; i < k; i++) {
-        Thread.sleep(ThreadLocalRandom.current().nextInt(1000) + 1);
-        scegli_pc();
-        if (this.labTutor.richiesta(this)) {
-          while (lab) {
-            int n = ThreadLocalRandom.current().nextInt(1000) + 1;
-            System.out.println("Uso laboratorio per " + n + "ms");
-            Thread.sleep(n);
-            this.labTutor.rilascio(this);
-          }
-        }
-      }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+    // try {
+    //   for (int i = 0; i < k; i++) {
+    //     Thread.sleep(ThreadLocalRandom.current().nextInt(1000) + 1);
+    //     scegli_pc();
+    //     if (this.labTutor.richiesta(this)) {
+    //       while (lab) {
+    //         int n = ThreadLocalRandom.current().nextInt(1000) + 1;
+    //         System.out.println("Uso laboratorio per " + n + "ms");
+    //         Thread.sleep(n);
+    //         this.labTutor.rilascio(this);
+    //       }
+    //     }
+    //   }
+    // } catch (InterruptedException e) {
+    //   e.printStackTrace();
+    // }
   }
 
   public void set_lab(boolean b) {

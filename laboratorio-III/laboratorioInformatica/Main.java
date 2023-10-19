@@ -13,12 +13,9 @@ public class Main {
     nProfessori = Integer.parseInt(args[0]);
     nTesisti = Integer.parseInt(args[1]);
     nStudenti = Integer.parseInt(args[2]);
-
     Tutor tutor = new Tutor();
-
-    tutor.start();
-
     ArrayList<Utente> utenti = new ArrayList<Utente>();
+
     for (int i = 0; i < nProfessori; i++) {
       utenti.add(new Professore(tutor));
     }
@@ -29,11 +26,15 @@ public class Main {
       utenti.add(new Studente(tutor));
     }
 
-    utenti.forEach(t -> t.start());
+    tutor.set_coda_studenti(utenti);
 
-    utenti.forEach((t) -> {
+    tutor.run();
+
+    utenti.forEach(u -> u.start());
+
+    utenti.forEach((u) -> {
       try {
-        t.join();
+        u.join();
       } catch (InterruptedException e) {
         System.err.println(e.getMessage());
       }
