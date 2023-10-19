@@ -34,7 +34,7 @@ public class Computer {
   public void occupy(String user) {
     this.inUse = true;
     this.setUser(user);
-    System.out.println("Computer " + getId() + " is now in use by " + this.user);
+    System.out.println("Computer " + getId() + " is now in use by " + this.user.toString());
   }
 
   public void free() {

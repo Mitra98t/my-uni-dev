@@ -75,7 +75,7 @@ public class Tutor {
     s.requestTime = Instant.now();
     reqQueue.add(s);
     System.out.println(s.toString() + " requested a computer at " + s.requestTime);
-    while (reqQueue.peek() != null || checkInUse(labComputers[freeComputerPos])) {
+    while ((reqQueue.peek() != null && !reqQueue.peek().toString().equals(s.toString())) || checkInUse(labComputers[freeComputerPos]) || freeComputerPos == -1) {
       try {
         wait();
       } catch (InterruptedException e) {
