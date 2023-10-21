@@ -8,14 +8,19 @@ public class MyFile {
     this.file = file;
   }
 
-  public void printContent() {
+  public char[] getCharArray() {
     try {
       String content = new String(Files.readAllBytes(file.toPath()));
-      System.out.println("File content: \n" + content);
       char[] chars = content.toCharArray();
+      return chars;
     } catch (Exception e) {
       e.printStackTrace();
+      return null;
     }
+  }
+
+  public String toString() {
+    return file.getName();
   }
 
 }
