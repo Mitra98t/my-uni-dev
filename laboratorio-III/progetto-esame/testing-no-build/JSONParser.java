@@ -46,7 +46,7 @@ public class JSONParser {
     jsonArray.put(user.toJSON());
     JSONParser.writeJSONToFile(jsonPath, jsonArray.toString());
     return true;
-    
+
   }
 
   public static void updateUser(String jsonPath, User user) {
@@ -81,10 +81,14 @@ public class JSONParser {
     double services = 0;
     double quality = 0;
     ArrayList<Ratings> allRatings = new ArrayList<Ratings>();
+    long oldestRating = System.currentTimeMillis();
 
     for (int i = 0; i < userList.length; i++) {
       Ratings[] ratings = userList[i].getRatings();
       for (int j = 0; j < ratings.length; j++) {
+        if (ratings[j].getDate().getTime() < oldestRating) {
+          oldestRating = ratings[j].getDate().getTime();
+        }
         if (ratings[j].getTargetHotel().equals(hotelToUpdate.getName() + " - " + hotelToUpdate.getCity())) {
           rate += ratings[j].getRate();
           cleaning += ratings[j].getClean();
@@ -116,13 +120,14 @@ public class JSONParser {
 
     allRatings.sort((a, b) -> b.getDate().compareTo(a.getDate()));
 
-    System.out.println("most recent vote: " + allRatings.get(0));
-    System.out.println("time evaluation local ranking: " + (System.currentTimeMillis() - allRatings.get(0).getDate().getTime()) / 1000); // seconds
-
-    double localRanking = allRatings.size() - ((System.currentTimeMillis() - allRatings.get(0).getDate().getTime()) / 1000 / 10) + hotelToUpdate.getRate();
+    double localRanking = (hotelToUpdate.getRate()*2) * (allRatings.size() / 10.0);
+    if (allRatings.size() >= 2) {
+      double normalized = normalizeValue(allRatings.get(1).getDate().getTime(), oldestRating,
+          System.currentTimeMillis());
+      localRanking *= (normalized + 1) * 10;
+    }
     localRanking = Math.round(localRanking * 100.0) / 100.0;
     hotelToUpdate.setLocalRanking(localRanking);
-
 
     JSONParser.updateHotel(hotelJsonPath, hotelToUpdate);
   }
@@ -193,6 +198,10 @@ public class JSONParser {
         }
       }
     }
+  }
+
+  private static double normalizeValue(long value, long minValue, long maxValue) {
+    return Double.parseDouble(String.valueOf((value - minValue) / (maxValue - minValue)));
   }
 
 }
