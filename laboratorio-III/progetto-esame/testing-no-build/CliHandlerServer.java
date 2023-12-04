@@ -44,7 +44,6 @@ public class CliHandlerServer {
     try {
       int selection = 0;
       boolean valid = false;
-      this.sendClearScreen();
       while (!valid) {
         out.println("Please select an option:");
         for (int i = 0; i < options.length; i++) {
@@ -61,7 +60,6 @@ public class CliHandlerServer {
         if (!lineInput.equals("") && selection > 0 && selection <= options.length) {
           valid = true;
         } else {
-          this.sendClearScreen();
           out.println("Invalid selection, please try again.");
         }
       }
@@ -78,6 +76,24 @@ public class CliHandlerServer {
       do {
         out.println(this.colorizeString(message, Colors.CYAN));
         out.println("prompt-now");
+        lineInput = in.readLine();
+        if (lineInput.equals("")) {
+          out.println("Invalid input, please try again.");
+        }
+      } while (lineInput.equals(""));
+      return lineInput;
+    } catch (Exception e) {
+      System.out.println(e);
+      return null;
+    }
+  }
+
+  public String passwordPrompt(String message) {
+    try {
+      String lineInput = "";
+      do {
+        out.println(this.colorizeString(message, Colors.CYAN));
+        out.println("password-now");
         lineInput = in.readLine();
         if (lineInput.equals("")) {
           out.println("Invalid input, please try again.");
@@ -108,7 +124,6 @@ public class CliHandlerServer {
         if (vote > 0 && vote <= 5) {
           valid = true;
         } else {
-          this.sendClearScreen();
           out.println("Invalid selection, please try again.");
         }
       }

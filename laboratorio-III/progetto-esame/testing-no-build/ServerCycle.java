@@ -53,9 +53,10 @@ public class ServerCycle implements Runnable {
       in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
       CliHandlerServer cliHandler = new CliHandlerServer(out, in);
       // usage loop
-      while (state.getState() != "exit") {
+      while (!state.isState("Exit")) {
+        cliHandler.sendClearScreen();
         if (currentLoggedUser != null) {
-          cliHandler.send("You are logged in as " + currentLoggedUser.getUsername());
+          cliHandler.send("You are logged in as " + currentLoggedUser.getUsername() + "\n");
         }
         switch (state) {
           case HOME:
@@ -63,7 +64,6 @@ public class ServerCycle implements Runnable {
                 State.SEARCHALLHOTELS.getState(), State.EXIT.getState() };
             String selection = options[cliHandler.selection(options)];
             advanceState(State.valueOf(selection.toUpperCase()));
-            System.out.println("client selected: " + selection);
             cliHandler.send(selection);
 
             cliHandler.pause();
@@ -74,22 +74,15 @@ public class ServerCycle implements Runnable {
                 State.EXIT.getState() };
             String selection2 = options2[cliHandler.selection(options2)];
             State chosenState = State.valueOf(selection2.toUpperCase());
-            System.out.println("chosen state: " + chosenState);
             advanceState(chosenState);
-            System.out.println("client selected: " + selection2);
             cliHandler.send(selection2);
 
             cliHandler.pause();
             break;
           case LOGIN:
             String username = cliHandler.prompt("Enter your username: ");
-            cliHandler.send("You entered " + username);
-            String password = cliHandler.prompt("Enter your password: ");
-            cliHandler.send("You entered " + password);
-            System.out.println("client username: " + username);
-            System.out.println("client password: " + password);
+            String password = cliHandler.passwordPrompt("Enter your password: ");
             User userToCheck = JSONParser.getUserByUsername("resources/Users.json", username);
-            System.out.println("userToCheck: " + userToCheck);
             if (userToCheck != null && userToCheck.getPassword().equals(password)) {
               currentLoggedUser = userToCheck;
             }
@@ -104,11 +97,7 @@ public class ServerCycle implements Runnable {
             break;
           case REGISTER:
             String username2 = cliHandler.prompt("Enter your username: ");
-            cliHandler.send("You entered " + username2);
-            String password2 = cliHandler.prompt("Enter your password: ");
-            cliHandler.send("You entered " + password2);
-            System.out.println("client username: " + username2);
-            System.out.println("client password: " + password2);
+            String password2 = cliHandler.passwordPrompt("Enter your password: ");
             User userToRegister = new User(username2, password2);
             boolean registerResult = JSONParser.registerUser("resources/Users.json", userToRegister);
             if (registerResult) {
@@ -121,17 +110,16 @@ public class ServerCycle implements Runnable {
             break;
           case SEARCHHOTEL:
             String hotelName = cliHandler.prompt("Enter the name of the hotel you want to search for: ");
-            cliHandler.send("You entered " + hotelName);
             String hotelCity = cliHandler.prompt("Enter the city of the hotel you want to search for: ");
-            cliHandler.send("You entered " + hotelCity);
             Hotel hotelToSearch = JSONParser.getHotelByNameAndCity("resources/Hotels.json", hotelName, hotelCity);
             if (hotelToSearch == null) {
               cliHandler.send("Hotel not found.");
               returnToPreviousState();
+              cliHandler.pause();
               break;
             }
+            cliHandler.sendClearScreen();
             cliHandler.send(hotelToSearch.toString());
-            System.out.println("client hotelName: " + hotelName);
             cliHandler.pause();
             returnToPreviousState();
             break;
@@ -139,6 +127,7 @@ public class ServerCycle implements Runnable {
             String cityToSearch = cliHandler.prompt("Enter the city of the hotel you want to search for: ");
             ArrayList<Hotel> hotels = JSONParser.getAllHotelsByCity("resources/Hotels.json", cityToSearch);
             hotels.sort((h1, h2) -> h1.getLocalRanking() > h2.getLocalRanking() ? 1 : -1);
+            cliHandler.sendClearScreen();
             for (int i = 0; i < hotels.size(); i++) {
               cliHandler.send(hotels.get(i).toString());
               cliHandler.send("---");
@@ -148,14 +137,13 @@ public class ServerCycle implements Runnable {
             break;
           case VOTEHOTEL:
             String hotelToVote = cliHandler.prompt("Enter the name of the hotel you want to vote for:");
-            cliHandler.send("You entered " + hotelToVote);
             String hotelCityToVote = cliHandler.prompt("Enter the city of the hotel you want to vote for:");
-            cliHandler.send("You entered " + hotelCityToVote);
             Hotel hotelToVoteFor = JSONParser.getHotelByNameAndCity("resources/Hotels.json", hotelToVote,
                 hotelCityToVote);
             if (hotelToVoteFor == null) {
               cliHandler.send("Hotel not found.");
               returnToPreviousState();
+              cliHandler.pause();
               break;
             }
             double rate = cliHandler.voting("Vote your experience with " + hotelToVoteFor.getName() + ":");
@@ -169,6 +157,7 @@ public class ServerCycle implements Runnable {
             JSONParser.calculateHotelRating("resources/Users.json", "resources/Hotels.json", hotelToVoteFor);
             cliHandler.send("Thank you for your vote!");
             returnToPreviousState();
+            cliHandler.pause();
             break;
           case SHOWBADGES:
             cliHandler.send("Badges of " + currentLoggedUser.getUsername() + ":");

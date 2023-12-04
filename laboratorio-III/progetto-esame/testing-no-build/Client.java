@@ -12,8 +12,11 @@ public class Client {
     String serverMessage;
     do {
       serverMessage = in.readLine();
-      cliHandler.interpret(serverMessage);
-    } while (!serverMessage.equals("exit"));
+      int status = cliHandler.interpret(serverMessage);
+      if (status == 1) {
+        break;
+      }
+    } while (!serverMessage.equals("exit-now"));
 
     out.close();
     in.close();
