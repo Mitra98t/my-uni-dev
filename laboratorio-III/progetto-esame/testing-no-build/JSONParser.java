@@ -60,6 +60,8 @@ public class JSONParser {
         return;
       }
     }
+    jsonArray.put(user.toJSON());
+    JSONParser.writeJSONToFile(jsonPath, jsonArray.toString());
   }
 
   public static User[] getAllUsers(String jsonPath) {
@@ -71,65 +73,6 @@ public class JSONParser {
       users[i] = new User(userJSON);
     }
     return users;
-  }
-
-  public static void calculateHotelRating(String userJsonPath, String hotelJsonPath, Hotel hotelToUpdate) {
-    User[] userList = JSONParser.getAllUsers(userJsonPath);
-    double rate = 0;
-    double cleaning = 0;
-    double position = 0;
-    double services = 0;
-    double quality = 0;
-    ArrayList<Ratings> allRatings = new ArrayList<Ratings>();
-    long oldestRating = System.currentTimeMillis();
-
-    for (int i = 0; i < userList.length; i++) {
-      Ratings[] ratings = userList[i].getRatings();
-      for (int j = 0; j < ratings.length; j++) {
-        if (ratings[j].getDate().getTime() < oldestRating) {
-          oldestRating = ratings[j].getDate().getTime();
-        }
-        if (ratings[j].getTargetHotel().equals(hotelToUpdate.getName() + " - " + hotelToUpdate.getCity())) {
-          rate += ratings[j].getRate();
-          cleaning += ratings[j].getClean();
-          position += ratings[j].getPosition();
-          services += ratings[j].getServices();
-          quality += ratings[j].getQuality();
-          allRatings.add(ratings[j]);
-        }
-      }
-    }
-
-    rate /= allRatings.size();
-    cleaning /= allRatings.size();
-    position /= allRatings.size();
-    services /= allRatings.size();
-    quality /= allRatings.size();
-
-    rate = Math.round(rate * 100.0) / 100.0;
-    cleaning = Math.round(cleaning * 100.0) / 100.0;
-    position = Math.round(position * 100.0) / 100.0;
-    services = Math.round(services * 100.0) / 100.0;
-    quality = Math.round(quality * 100.0) / 100.0;
-
-    hotelToUpdate.setRate(rate);
-    hotelToUpdate.setCleaning(cleaning);
-    hotelToUpdate.setPosition(position);
-    hotelToUpdate.setServicesRate(services);
-    hotelToUpdate.setQuality(quality);
-
-    allRatings.sort((a, b) -> b.getDate().compareTo(a.getDate()));
-
-    double localRanking = (hotelToUpdate.getRate()*2) * (allRatings.size() / 10.0);
-    if (allRatings.size() >= 2) {
-      double normalized = normalizeValue(allRatings.get(1).getDate().getTime(), oldestRating,
-          System.currentTimeMillis());
-      localRanking *= (normalized + 1) * 10;
-    }
-    localRanking = Math.round(localRanking * 100.0) / 100.0;
-    hotelToUpdate.setLocalRanking(localRanking);
-
-    JSONParser.updateHotel(hotelJsonPath, hotelToUpdate);
   }
 
   public static void updateHotel(String jsonPath, Hotel hotel) {
@@ -146,7 +89,7 @@ public class JSONParser {
     }
   }
 
-  public static Hotel getHotelByNameAndCity(String jsonPath, String name, String city) {
+  synchronized public static Hotel getHotelByNameAndCity(String jsonPath, String name, String city) {
     String json = JSONParser.readJSONFromFile(jsonPath);
     JSONArray jsonArray = new JSONArray(json);
     for (int i = 0; i < jsonArray.length(); i++) {
@@ -200,8 +143,22 @@ public class JSONParser {
     }
   }
 
-  private static double normalizeValue(long value, long minValue, long maxValue) {
-    return Double.parseDouble(String.valueOf((value - minValue) / (maxValue - minValue)));
+  public static Hotel getBestHotel(String jsonPath) {
+    String json = JSONParser.readJSONFromFile(jsonPath);
+    JSONArray jsonArray = new JSONArray(json);
+    Hotel bestHotel = null;
+    double bestRanking = 0;
+    for (int i = 0; i < jsonArray.length(); i++) {
+      JSONObject hotelJSON = jsonArray.getJSONObject(i);
+      if (hotelJSON.has("localRanking") && hotelJSON.getDouble("localRanking") > bestRanking) {
+        bestRanking = hotelJSON.getDouble("localRanking");
+        bestHotel = new Hotel(hotelJSON);
+      }
+    }
+    if (bestHotel == null) {
+      return new Hotel(jsonArray.getJSONObject(0));
+    }
+    return bestHotel;
   }
 
 }

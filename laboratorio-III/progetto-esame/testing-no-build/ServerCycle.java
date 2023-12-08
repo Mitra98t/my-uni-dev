@@ -48,6 +48,7 @@ public class ServerCycle implements Runnable {
 
   @Override
   public void run() {
+    ServerCache cache = ServerCache.getInstance();
     try {
       out = new PrintWriter(clientSocket.getOutputStream(), true);
       in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -56,15 +57,16 @@ public class ServerCycle implements Runnable {
       while (!state.isState("Exit")) {
         cliHandler.sendClearScreen();
         if (currentLoggedUser != null) {
-          cliHandler.send("You are logged in as " + currentLoggedUser.getUsername() + "\n");
+          cliHandler.send("You are logged in as " + currentLoggedUser.getUsername() + "\n\n");
         }
         switch (state) {
           case HOME:
             String[] options = { State.LOGIN.getState(), State.REGISTER.getState(), State.SEARCHHOTEL.getState(),
                 State.SEARCHALLHOTELS.getState(), State.EXIT.getState() };
+
             String selection = options[cliHandler.selection(options)];
+
             advanceState(State.valueOf(selection.toUpperCase()));
-            cliHandler.send(selection);
 
             cliHandler.pause();
             break;
@@ -72,20 +74,24 @@ public class ServerCycle implements Runnable {
             String[] options2 = { State.SEARCHHOTEL.getState(), State.SEARCHALLHOTELS.getState(),
                 State.SHOWBADGES.getState(), State.VOTEHOTEL.getState(), State.LOGOUT.getState(),
                 State.EXIT.getState() };
+
             String selection2 = options2[cliHandler.selection(options2)];
+
             State chosenState = State.valueOf(selection2.toUpperCase());
+
             advanceState(chosenState);
-            cliHandler.send(selection2);
 
             cliHandler.pause();
             break;
           case LOGIN:
             String username = cliHandler.prompt("Enter your username: ");
             String password = cliHandler.passwordPrompt("Enter your password: ");
-            User userToCheck = JSONParser.getUserByUsername("resources/Users.json", username);
+
+            User userToCheck = cache.getUserByUsername(username);
             if (userToCheck != null && userToCheck.getPassword().equals(password)) {
               currentLoggedUser = userToCheck;
             }
+
             if (currentLoggedUser == null) {
               cliHandler.send("Wrong username or password.");
               advanceState(State.HOME);
@@ -93,84 +99,122 @@ public class ServerCycle implements Runnable {
               cliHandler.send("You have been logged in.");
               advanceState(State.HOMELOGGEDIN);
             }
+
+            cliHandler.send("login-now");
             cliHandler.pause();
             break;
           case REGISTER:
             String username2 = cliHandler.prompt("Enter your username: ");
             String password2 = cliHandler.passwordPrompt("Enter your password: ");
+
             User userToRegister = new User(username2, password2);
-            boolean registerResult = JSONParser.registerUser("resources/Users.json", userToRegister);
+
+            boolean registerResult = cache.registerUser(userToRegister);
             if (registerResult) {
               cliHandler.send("You have been registered.");
             } else {
               cliHandler.send("Username already taken.");
             }
+
             advanceState(State.HOME);
             cliHandler.pause();
             break;
           case SEARCHHOTEL:
             String hotelName = cliHandler.prompt("Enter the name of the hotel you want to search for: ");
             String hotelCity = cliHandler.prompt("Enter the city of the hotel you want to search for: ");
-            Hotel hotelToSearch = JSONParser.getHotelByNameAndCity("resources/Hotels.json", hotelName, hotelCity);
+
+            Hotel hotelToSearch = cache.getHotelByNameAndCity(hotelName, hotelCity);
+
             if (hotelToSearch == null) {
               cliHandler.send("Hotel not found.");
               returnToPreviousState();
               cliHandler.pause();
               break;
             }
+
             cliHandler.sendClearScreen();
             cliHandler.send(hotelToSearch.toString());
+
             cliHandler.pause();
             returnToPreviousState();
             break;
           case SEARCHALLHOTELS:
             String cityToSearch = cliHandler.prompt("Enter the city of the hotel you want to search for: ");
-            ArrayList<Hotel> hotels = JSONParser.getAllHotelsByCity("resources/Hotels.json", cityToSearch);
+
+            ArrayList<Hotel> hotels = cache.getAllHotelsByCity(cityToSearch);
+
             hotels.sort((h1, h2) -> h1.getLocalRanking() > h2.getLocalRanking() ? 1 : -1);
+
             cliHandler.sendClearScreen();
             for (int i = 0; i < hotels.size(); i++) {
               cliHandler.send(hotels.get(i).toString());
               cliHandler.send("---");
             }
+
             cliHandler.pause();
             returnToPreviousState();
             break;
           case VOTEHOTEL:
             String hotelToVote = cliHandler.prompt("Enter the name of the hotel you want to vote for:");
             String hotelCityToVote = cliHandler.prompt("Enter the city of the hotel you want to vote for:");
-            Hotel hotelToVoteFor = JSONParser.getHotelByNameAndCity("resources/Hotels.json", hotelToVote,
-                hotelCityToVote);
+
+            Hotel hotelToVoteFor = cache.getHotelByNameAndCity(hotelToVote, hotelCityToVote);
+
             if (hotelToVoteFor == null) {
               cliHandler.send("Hotel not found.");
               returnToPreviousState();
               cliHandler.pause();
               break;
             }
+
             double rate = cliHandler.voting("Vote your experience with " + hotelToVoteFor.getName() + ":");
+
             double clean = cliHandler.voting("Vote the cleanliness of " + hotelToVoteFor.getName() + ":");
+
             double service = cliHandler.voting("Vote the service of " + hotelToVoteFor.getName() + ":");
+
             double location = cliHandler.voting("Vote the location of " + hotelToVoteFor.getName() + ":");
+
             double quality = cliHandler.voting("Vote the price to quality ratio of " + hotelToVoteFor.getName() + ":");
-            currentLoggedUser.addVote(new Ratings(hotelToVoteFor.getName() + " - " + hotelToVoteFor.getCity(), rate,
-                clean, service, location, quality));
-            JSONParser.updateUser("resources/Users.json", currentLoggedUser);
-            JSONParser.calculateHotelRating("resources/Users.json", "resources/Hotels.json", hotelToVoteFor);
+
+            hotelToVoteFor
+                .addVote(new Ratings(rate, location, clean, service, quality, currentLoggedUser.getUsername()));
+
+            hotelToVoteFor.calculateRatings();
+
+            cache.updateHotel(hotelToVoteFor);
+
+            currentLoggedUser.addExperience(50);
+            cache.updateUser(currentLoggedUser);
+
             cliHandler.send("Thank you for your vote!");
+
             returnToPreviousState();
             cliHandler.pause();
             break;
           case SHOWBADGES:
-            cliHandler.send("Badges of " + currentLoggedUser.getUsername() + ":");
+            cliHandler.send("Badges of " + currentLoggedUser.getUsername() + ":\n");
+
+            if (currentLoggedUser.getBadges().length == 0) {
+              cliHandler.send("No badges yet.\nVote some hotels to get some badges!");
+            }
+
             Badge[] badges = currentLoggedUser.getBadges();
             for (int i = 0; i < badges.length; i++) {
               cliHandler.send(badges[i].toString());
+              cliHandler.send("---");
             }
+
+            cliHandler.send("");
             cliHandler.pause();
             returnToPreviousState();
             break;
           case LOGOUT:
             currentLoggedUser = null;
             cliHandler.send("You have been logged out.");
+
+            cliHandler.send("logout-now");
+
             cliHandler.pause();
             advanceState(State.HOME);
             break;
@@ -179,6 +223,8 @@ public class ServerCycle implements Runnable {
             break;
         }
       }
+
+      ServerSaver.save();
 
       out.println("exit-now");
 

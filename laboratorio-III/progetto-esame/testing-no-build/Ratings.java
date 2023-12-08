@@ -3,41 +3,37 @@ import java.sql.Date;
 import org.json.JSONObject;
 
 public class Ratings {
-  private String targetHotel;
   private double synthetic;
   private double position;
   private double clean;
   private double service;
   private double priceQuality;
   private Date date;
+  private String username;
 
-  public Ratings(String targetHotel, double synthetic, double position, double clean, double service,
-      double priceQuality) {
+  public Ratings(double synthetic, double position, double clean, double service,
+      double priceQuality, String username) {
     if (synthetic < 0 || synthetic > 5 || position < 0 || position > 5 || clean < 0 || clean > 5 || service < 0
         || service > 5 || priceQuality < 0 || priceQuality > 5) {
       throw new IllegalArgumentException("All rating values must be between 0 and 5.");
     }
-    this.targetHotel = targetHotel;
     this.synthetic = synthetic;
     this.position = position;
     this.clean = clean;
     this.service = service;
     this.priceQuality = priceQuality;
     this.date = new Date(System.currentTimeMillis());
+    this.username = username;
   }
 
   public Ratings(JSONObject json) {
-    this.targetHotel = json.getString("targetHotel");
     this.synthetic = json.getDouble("rate");
     this.position = json.getDouble("position");
     this.clean = json.getDouble("cleaning");
     this.service = json.getDouble("services");
     this.priceQuality = json.getDouble("quality");
     this.date = new Date(json.getLong("date"));
-  }
-
-  public String getTargetHotel() {
-    return targetHotel;
+    this.username = json.getString("username");
   }
 
   public double getRate() {
@@ -58,10 +54,6 @@ public class Ratings {
 
   public double getQuality() {
     return priceQuality;
-  }
-
-  public void setTargetHotel(String targetHotel) {
-    this.targetHotel = targetHotel;
   }
 
   public void setSynthetic(double synthetic) {
@@ -110,13 +102,14 @@ public class Ratings {
     json.put("position", this.clean);
     json.put("services", this.service);
     json.put("quality", this.priceQuality);
-    json.put("targetHotel", this.targetHotel);
     json.put("date", this.date.getTime());
+    json.put("username", this.username);
     return json;
   }
 
   public String toString() {
-    return "TimeStamp: " + date.getTime() + "\nRate: " + synthetic + "\nPosition: " + position + "\nClean: " + clean + "\nServices: " + service
+    return "TimeStamp: " + date.getTime() + "\nRate: " + synthetic + "\nPosition: " + position + "\nClean: " + clean
+        + "\nServices: " + service
         + "\nPrice/Quality: " + priceQuality;
   }
 
