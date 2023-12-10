@@ -1,18 +1,1 @@
-[
-  {
-    "badges": [
-      { "description": "I primi passi!", "title": "Recensore" },
-      { "description": "Che traguardo!", "title": "Recensore Esperto" },
-      {
-        "description": "Senza di te non siamo niente!",
-        "title": "Contributore"
-      }
-    ],
-    "password": "1234",
-    "experience": 550,
-    "username": "Fede"
-  },
-  { "badges": [], "password": "1234", "experience": 50, "username": "Andre" },
-  { "badges": [], "password": "1234", "experience": 50, "username": "Ale" },
-  { "badges": [], "password": "1234", "experience": 0, "username": "Alex" }
-]
+[{"badges":[{"description":"I primi passi!","title":"Recensore"},{"description":"Che traguardo!","title":"Recensore Esperto"},{"description":"Senza di te non siamo niente!","title":"Contributore"},{"description":"Diventi inestimabile!","title":"Contributore Esperto"}],"password":"1234","experience":800,"username":"Fede"},{"badges":[],"password":"1234","experience":50,"username":"Andre"},{"badges":[],"password":"1234","experience":50,"username":"Ale"},{"badges":[],"password":"1234","experience":0,"username":"Alex"}]

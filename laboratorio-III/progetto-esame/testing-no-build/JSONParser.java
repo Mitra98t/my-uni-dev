@@ -8,20 +8,6 @@ import org.apache.commons.io.IOUtils;
 import org.json.*;
 
 public class JSONParser {
-  // parse the JSON file and return an array of Hotel objects
-  public static Hotel[] parseHotels(String jsonPath) {
-    String json = JSONParser.readJSONFromFile(jsonPath);
-    JSONArray jsonArray = new JSONArray(json);
-    Hotel[] hotels = new Hotel[jsonArray.length()];
-
-    for (int i = 0; i < jsonArray.length(); i++) {
-      JSONObject jsonObject = jsonArray.getJSONObject(i);
-      hotels[i] = new Hotel(jsonObject);
-    }
-
-    return hotels;
-  }
-
   public static User getUserByUsername(String jsonPath, String username) {
     String data = JSONParser.readJSONFromFile(jsonPath);
     JSONArray jsonArray = new JSONArray(data);
@@ -32,21 +18,6 @@ public class JSONParser {
       }
     }
     return null;
-  }
-
-  public static boolean registerUser(String jsonPath, User user) {
-    String data = JSONParser.readJSONFromFile(jsonPath);
-    JSONArray jsonArray = new JSONArray(data);
-    for (int i = 0; i < jsonArray.length(); i++) {
-      JSONObject userJSON = jsonArray.getJSONObject(i);
-      if (userJSON.getString("username").equals(user.getUsername())) {
-        return false;
-      }
-    }
-    jsonArray.put(user.toJSON());
-    JSONParser.writeJSONToFile(jsonPath, jsonArray.toString());
-    return true;
-
   }
 
   public static void updateUser(String jsonPath, User user) {
@@ -62,17 +33,6 @@ public class JSONParser {
     }
     jsonArray.put(user.toJSON());
     JSONParser.writeJSONToFile(jsonPath, jsonArray.toString());
-  }
-
-  public static User[] getAllUsers(String jsonPath) {
-    String data = JSONParser.readJSONFromFile(jsonPath);
-    JSONArray jsonArray = new JSONArray(data);
-    User[] users = new User[jsonArray.length()];
-    for (int i = 0; i < jsonArray.length(); i++) {
-      JSONObject userJSON = jsonArray.getJSONObject(i);
-      users[i] = new User(userJSON);
-    }
-    return users;
   }
 
   public static void updateHotel(String jsonPath, Hotel hotel) {

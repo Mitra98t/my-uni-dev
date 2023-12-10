@@ -4,13 +4,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import lombok.Synchronized;
-
 public class ServerCache {
   private static ServerCache instance;
   private ArrayList<Hotel> hotels;
   private ArrayList<User> users;
-  private ArrayList<User> currentLoggedUsers;
   private ArrayList<String> completedCities;
   private Hotel bestHotel;
 
@@ -154,8 +151,12 @@ public class ServerCache {
   }
 
   synchronized public void setBestHotel(Hotel hotel) {
-    if (hotel.getLocalRanking() < this.bestHotel.getLocalRanking())
+    System.out.println("Checking " + hotel.getName() + " " + hotel.getCity() + " " + hotel.getLocalRanking() + " vs "
+        + this.bestHotel.getName() + " " + this.bestHotel.getCity() + " " + this.bestHotel.getLocalRanking());
+    if (hotel.getLocalRanking() <= this.bestHotel.getLocalRanking())
       return;
+
+    System.out.println("new hotel won");
     this.bestHotel = hotel;
     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     String message = "Il miglior hotel è ora " + hotel.getName() + " " + hotel.getCity() + " " + hotel.getLocalRanking()

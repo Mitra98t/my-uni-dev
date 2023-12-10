@@ -2,9 +2,10 @@ import java.io.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Socket;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Client {
-
+  private static final AtomicInteger clientPortCounter = new AtomicInteger(5000);
   private static DatagramSocket udpSocket;
 
   public static void main(String[] args) throws IOException {
@@ -19,7 +20,8 @@ public class Client {
       @Override
       public void run() {
         try {
-          udpSubscribe();
+          int clientPort = clientPortCounter.incrementAndGet();
+          udpSubscribe(clientPort);
         } catch (IOException e) {
           e.printStackTrace();
         }
@@ -49,20 +51,15 @@ public class Client {
     socket.close();
   }
 
-  public static void udpSubscribe() throws IOException {
+  public static void udpSubscribe(int port) throws IOException {
 
-    udpSocket = new DatagramSocket(4445);
-    // Crea un buffer per ricevere i dati
+    udpSocket = new DatagramSocket(port);
     byte[] buffer = new byte[1024];
 
-    // Crea un DatagramPacket per ricevere i dati
     DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-    // Ricevi il pacchetto
     udpSocket.receive(packet);
-    // Converti i dati ricevuti in una stringa
     String message = new String(packet.getData(), 0, packet.getLength());
 
-    // Stampa il messaggio
     System.out.println("\n---\nNotifica:\n" + message + "\n---\n");
   }
 
