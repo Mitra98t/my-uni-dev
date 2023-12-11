@@ -1,12 +1,15 @@
 import java.io.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Client {
-  private static final AtomicInteger clientPortCounter = new AtomicInteger(5000);
-  private static DatagramSocket udpSocket;
+  private static MulticastSocket multicastSocket;
+  private static InetAddress group;
+  private static boolean closed = false;
 
   public static void main(String[] args) throws IOException {
     Socket socket = new Socket("localhost", 6666);
@@ -20,8 +23,10 @@ public class Client {
       @Override
       public void run() {
         try {
-          int clientPort = clientPortCounter.incrementAndGet();
-          udpSubscribe(clientPort);
+          udpSubscribe();
+          while (true) {
+            receiveMulticastMessage();
+          }
         } catch (IOException e) {
           e.printStackTrace();
         }
@@ -36,10 +41,12 @@ public class Client {
         break;
       }
       if (status == 2) {
+        closed = false;
         udpListenerThread = new Thread(udpListener);
         udpListenerThread.start();
       }
       if (status == 3) {
+        closed = true;
         udpUnsubscribe();
         udpListenerThread.interrupt();
       }
@@ -51,20 +58,44 @@ public class Client {
     socket.close();
   }
 
-  public static void udpSubscribe(int port) throws IOException {
+  public static void udpSubscribe() throws IOException {
+    System.setProperty("java.net.preferIPv4Stack", "true");
 
-    udpSocket = new DatagramSocket(port);
-    byte[] buffer = new byte[1024];
+    multicastSocket = new MulticastSocket(4445);
 
-    DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-    udpSocket.receive(packet);
-    String message = new String(packet.getData(), 0, packet.getLength());
+    // multicastSocket.setReuseAddress(true);
 
-    System.out.println("\n---\nNotifica:\n" + message + "\n---\n");
+    group = InetAddress.getByName("239.30.40.40");
+    multicastSocket.joinGroup(group);
   }
 
   public static void udpUnsubscribe() {
-    udpSocket.close();
+    try {
+      // Lascia il gruppo multicast
+      multicastSocket.leaveGroup(group);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    // Chiudi il socket
+    multicastSocket.close();
+  }
+
+  public static void receiveMulticastMessage() throws IOException {
+    while (!closed) {
+
+      byte[] buffer = new byte[1024];
+      DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+
+      // Ricevi il pacchetto
+      multicastSocket.receive(packet);
+
+      // Converti i dati ricevuti in una stringa
+      String message = new String(packet.getData(), 0, packet.getLength());
+
+      // Stampa il messaggio
+      System.out.println("Messaggio ricevuto: " + message);
+    }
   }
 
 }

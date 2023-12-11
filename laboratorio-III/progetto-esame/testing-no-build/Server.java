@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -11,13 +12,16 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Server {
-    private static DatagramSocket udpSocket;
+    private static MulticastSocket multicastSocket;
+    private static InetAddress group;
 
     public static void main(String[] args) throws Exception {
         ExecutorService executor = Executors.newCachedThreadPool();
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleAtFixedRate(new ServerSaver(), 30, 30, TimeUnit.SECONDS);
+
         startUdpServer();
+
         // tcp server
         try (ServerSocket server = new ServerSocket(6666)) {
             System.out.println("Server started");
@@ -40,23 +44,39 @@ public class Server {
 
     public static void startUdpServer() throws SocketException {
         // Inizializza il DatagramSocket quando avvii il server
-        udpSocket = new DatagramSocket();
-        udpSocket.setBroadcast(true);
+        try {
+            System.setProperty("java.net.preferIPv4Stack", "true");
+
+            multicastSocket = new MulticastSocket(4445);
+
+            multicastSocket.setReuseAddress(true);
+
+            group = InetAddress.getByName("239.30.40.40");
+            multicastSocket.joinGroup(group);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public static void broadcast(String broadcastMessage) throws IOException {
+    public static void broadcast(String broadcastMessage) {
         try {
             byte[] buffer = broadcastMessage.getBytes();
-            InetAddress address = InetAddress.getByName("255.255.255.255");
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, 4445);
-            udpSocket.send(packet);
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, 4445);
+            multicastSocket.send(packet);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public static void stopUdpServer() {
-        // Chiudi il DatagramSocket quando fermi il server
-        udpSocket.close();
+        try {
+            // Lascia il gruppo multicast
+            multicastSocket.leaveGroup(group);
+
+            // Chiudi il socket
+            multicastSocket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

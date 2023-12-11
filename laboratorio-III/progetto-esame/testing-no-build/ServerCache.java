@@ -161,11 +161,7 @@ public class ServerCache {
     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     String message = "Il miglior hotel è ora " + hotel.getName() + " " + hotel.getCity() + " " + hotel.getLocalRanking()
         + "\nNotifica alle " + dateFormat.format(new Date(System.currentTimeMillis()));
-    try {
-      Server.broadcast(message);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    Server.broadcast(message);
   }
 
 }
