@@ -1,10 +1,8 @@
 import java.io.*;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.Socket;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Client {
   private static MulticastSocket multicastSocket;
@@ -24,9 +22,7 @@ public class Client {
       public void run() {
         try {
           udpSubscribe();
-          while (true) {
-            receiveMulticastMessage();
-          }
+          receiveMulticastMessage();
         } catch (IOException e) {
           e.printStackTrace();
         }
@@ -59,13 +55,13 @@ public class Client {
   }
 
   public static void udpSubscribe() throws IOException {
-    System.setProperty("java.net.preferIPv4Stack", "true");
 
     multicastSocket = new MulticastSocket(4445);
 
     // multicastSocket.setReuseAddress(true);
+    multicastSocket.setInterface(InetAddress.getLocalHost());
+    group = InetAddress.getByName("230.30.40.40");
 
-    group = InetAddress.getByName("239.30.40.40");
     multicastSocket.joinGroup(group);
   }
 
@@ -83,7 +79,7 @@ public class Client {
 
   public static void receiveMulticastMessage() throws IOException {
     while (!closed) {
-
+      System.out.println("wating message");
       byte[] buffer = new byte[1024];
       DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 

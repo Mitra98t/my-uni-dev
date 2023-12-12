@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.ServerSocket;
@@ -45,13 +44,15 @@ public class Server {
     public static void startUdpServer() throws SocketException {
         // Inizializza il DatagramSocket quando avvii il server
         try {
-            System.setProperty("java.net.preferIPv4Stack", "true");
 
             multicastSocket = new MulticastSocket(4445);
 
             multicastSocket.setReuseAddress(true);
 
-            group = InetAddress.getByName("239.30.40.40");
+            multicastSocket.setInterface(InetAddress.getLocalHost());
+            System.out.println("\ninterface: " + multicastSocket.getInterface() + "\n");
+            group = InetAddress.getByName("230.30.40.40");
+
             multicastSocket.joinGroup(group);
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,6 +61,7 @@ public class Server {
 
     public static void broadcast(String broadcastMessage) {
         try {
+            System.out.println(broadcastMessage);
             byte[] buffer = broadcastMessage.getBytes();
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, 4445);
             multicastSocket.send(packet);

@@ -55,7 +55,7 @@ public class ServerCycle implements Runnable {
       CliHandlerServer cliHandler = new CliHandlerServer(out, in);
       // usage loop
       while (!state.isState("Exit")) {
-        cliHandler.sendClearScreen();
+        // cliHandler.sendClearScreen();
         if (currentLoggedUser != null) {
           cliHandler.send("You are logged in as " + currentLoggedUser.getUsername() + "\n\n");
         }
@@ -140,7 +140,7 @@ public class ServerCycle implements Runnable {
 
     hotels.sort((h1, h2) -> h1.getLocalRanking() > h2.getLocalRanking() ? 1 : -1);
 
-    cliHandler.sendClearScreen();
+    // cliHandler.sendClearScreen();
     for (int i = 0; i < hotels.size(); i++) {
       cliHandler.send(hotels.get(i).toString());
       cliHandler.send("---");
@@ -265,7 +265,7 @@ public class ServerCycle implements Runnable {
       return;
     }
 
-    cliHandler.sendClearScreen();
+    // cliHandler.sendClearScreen();
     cliHandler.send(hotelToSearch.toString());
 
     cliHandler.pause();
