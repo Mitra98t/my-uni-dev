@@ -18,7 +18,6 @@ public class Hotel {
   double quality;
   double localRanking;
 
-  // constructor from json object
   public Hotel(JSONObject jsonObject) {
     id = jsonObject.getInt("id");
     this.name = jsonObject.getString("name");

@@ -62,7 +62,6 @@ public class CliHandlerClient {
     } else if (message.equals("exit-now")) {
       System.out.println("\nServer closed connection.");
       return 1;
-      // code
     } else {
       System.out.println(message);
       return 0;

@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ public class ServerCache {
   private Hotel bestHotel;
 
   private ServerCache() {
-    // Costruttore privato per prevenire l'istanziazione diretta
     this.hotels = new ArrayList<Hotel>();
     this.users = new ArrayList<User>();
     this.completedCities = new ArrayList<String>();

@@ -21,15 +21,12 @@ public class Server {
 
         startUdpServer();
 
-        // tcp server
         try (ServerSocket server = new ServerSocket(6666)) {
             System.out.println("Server started");
             while (true) {
                 Socket socket = server.accept();
                 System.out.println("Client accepted");
 
-                // Invece di creare un nuovo Thread per ogni connessione, passa il task
-                // all'ExecutorService.
                 executor.execute(new ServerCycle(socket));
             }
         } catch (Exception e) {
@@ -42,7 +39,6 @@ public class Server {
     }
 
     public static void startUdpServer() throws SocketException {
-        // Inizializza il DatagramSocket quando avvii il server
         try {
 
             multicastSocket = new MulticastSocket(4445);
@@ -72,10 +68,8 @@ public class Server {
 
     public static void stopUdpServer() {
         try {
-            // Lascia il gruppo multicast
             multicastSocket.leaveGroup(group);
 
-            // Chiudi il socket
             multicastSocket.close();
         } catch (Exception e) {
             e.printStackTrace();

@@ -58,7 +58,6 @@ public class Client {
 
     multicastSocket = new MulticastSocket(4445);
 
-    // multicastSocket.setReuseAddress(true);
     multicastSocket.setInterface(InetAddress.getLocalHost());
     group = InetAddress.getByName("230.30.40.40");
 
@@ -67,13 +66,11 @@ public class Client {
 
   public static void udpUnsubscribe() {
     try {
-      // Lascia il gruppo multicast
       multicastSocket.leaveGroup(group);
     } catch (IOException e) {
       e.printStackTrace();
     }
 
-    // Chiudi il socket
     multicastSocket.close();
   }
 
@@ -83,13 +80,10 @@ public class Client {
       byte[] buffer = new byte[1024];
       DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
-      // Ricevi il pacchetto
       multicastSocket.receive(packet);
 
-      // Converti i dati ricevuti in una stringa
       String message = new String(packet.getData(), 0, packet.getLength());
 
-      // Stampa il messaggio
       System.out.println("Messaggio ricevuto: " + message);
     }
   }
