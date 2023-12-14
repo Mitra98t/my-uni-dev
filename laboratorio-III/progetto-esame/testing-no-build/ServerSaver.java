@@ -9,10 +9,10 @@ public class ServerSaver implements Runnable {
     ServerCache cache = ServerCache.getInstance();
     try {
       for (Hotel hotel : cache.getAllHotels()) {
-        JSONParser.updateHotel("./resources/Hotels.json", hotel);
+        JSONParser.updateHotel(ServerMain.getHotelsPath(), hotel);
       }
       for (User user : cache.getAllUsers()) {
-        JSONParser.updateUser("./resources/Users.json", user);
+        JSONParser.updateUser(ServerMain.getUsersPath(), user);
       }
     } catch (Exception e) {
       e.printStackTrace();

@@ -1,0 +1,5 @@
+{
+  "udpPort": 4445,
+  "udpAddress": "230.30.40.40",
+  "tcpPort": 6666
+}

@@ -4,13 +4,19 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.Socket;
 
-public class Client {
+import org.apache.commons.io.IOUtils;
+import org.json.JSONObject;
+
+public class ClientMain {
   private static MulticastSocket multicastSocket;
   private static InetAddress group;
   private static boolean closed = false;
+  private static int tcpPort;
+  private static int udpPort;
+  private static String udpAddress;
 
   public static void main(String[] args) throws IOException {
-    Socket socket = new Socket("localhost", 6666);
+    Socket socket = new Socket("localhost", tcpPort);
     PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
@@ -56,10 +62,10 @@ public class Client {
 
   public static void udpSubscribe() throws IOException {
 
-    multicastSocket = new MulticastSocket(4445);
+    multicastSocket = new MulticastSocket(udpPort);
 
     multicastSocket.setInterface(InetAddress.getLocalHost());
-    group = InetAddress.getByName("230.30.40.40");
+    group = InetAddress.getByName(udpAddress);
 
     multicastSocket.joinGroup(group);
   }
@@ -86,6 +92,20 @@ public class Client {
 
       System.out.println("Messaggio ricevuto: " + message);
     }
+  }
+
+  private static void parseConfig() {
+    try {
+      FileInputStream fis = new FileInputStream("./ServerConfig.json");
+      String data = IOUtils.toString(fis, "UTF-8");
+      JSONObject config = new JSONObject(data);
+      tcpPort = config.getInt("tcpPort");
+      udpPort = config.getInt("udpPort");
+      udpAddress = config.getString("udpAddress");
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+
   }
 
 }

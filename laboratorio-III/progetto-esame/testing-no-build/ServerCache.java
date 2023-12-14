@@ -14,7 +14,7 @@ public class ServerCache {
     this.hotels = new ArrayList<Hotel>();
     this.users = new ArrayList<User>();
     this.completedCities = new ArrayList<String>();
-    this.bestHotel = JSONParser.getBestHotel("./resources/Hotels.json");
+    this.bestHotel = JSONParser.getBestHotel(ServerMain.getHotelsPath());
   }
 
   public static synchronized ServerCache getInstance() {
@@ -44,7 +44,7 @@ public class ServerCache {
     User userFound = this.isUserPresent(username);
     if (userFound != null)
       return userFound;
-    userFound = JSONParser.getUserByUsername("./resources/Users.json", username);
+    userFound = JSONParser.getUserByUsername(ServerMain.getUsersPath(), username);
     if (userFound == null)
       return null;
     this.users.add(userFound);
@@ -88,7 +88,7 @@ public class ServerCache {
     Hotel hotelFound = this.isHotelPresent(name, city);
     if (hotelFound != null)
       return hotelFound;
-    hotelFound = JSONParser.getHotelByNameAndCity("./resources/Hotels.json", name, city);
+    hotelFound = JSONParser.getHotelByNameAndCity(ServerMain.getHotelsPath(), name, city);
     if (hotelFound == null)
       return null;
     this.hotels.add(hotelFound);
@@ -125,7 +125,7 @@ public class ServerCache {
       }
       return foundHotels;
     }
-    ArrayList<Hotel> hotels = JSONParser.getAllHotelsByCity("./resources/Hotels.json", city);
+    ArrayList<Hotel> hotels = JSONParser.getAllHotelsByCity(ServerMain.getHotelsPath(), city);
     if (hotels == null)
       return null;
 
@@ -159,7 +159,7 @@ public class ServerCache {
     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     String message = "Il miglior hotel è ora " + hotel.getName() + " " + hotel.getCity() + " " + hotel.getLocalRanking()
         + "\nNotifica alle " + dateFormat.format(new Date(System.currentTimeMillis()));
-    Server.broadcast(message);
+    ServerMain.broadcast(message);
   }
 
 }
